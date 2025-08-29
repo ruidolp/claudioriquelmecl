@@ -1,0 +1,644 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Estado del Proyecto - Repair Data for SAP DB</title>
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body class="min-h-screen bg-gray-50">
+    
+    <!-- Header (cargado dinámicamente) -->
+    <div id="header"></div>
+    
+    <!-- Contenido principal -->
+    <main class="pt-16">
+        
+        <!-- Hero Section -->
+        <section class="py-20 px-4 sm:px-6 lg:px-8">
+            <div class="mx-auto max-w-6xl">
+                
+                <!-- Hero Title -->
+                <div class="text-center mb-16">
+                    <h1 class="text-4xl font-bold text-gray-900 mb-6 sm:text-5xl">
+                        Estado del Proyecto
+                    </h1>
+                    <div class="w-20 h-1 bg-gradient-to-r from-cyan-400 to-emerald-500 mx-auto mb-8"></div>
+                    <p class="text-lg text-gray-700 leading-relaxed max-w-3xl mx-auto">
+                        Seguimiento de actividades y horas utilizadas
+                    </p>
+                </div>
+                
+                <!-- Project Info -->
+                <div class="bg-white rounded-2xl p-8 border border-cyan-200 mb-12">
+                    <h2 class="text-3xl font-bold text-gray-900 mb-8 text-center">
+                        Información del Proyecto
+                    </h2>
+                    
+                    <div class="grid md:grid-cols-2 gap-8">
+                        <div class="space-y-4">
+                            <div class="bg-gradient-to-r from-slate-800/5 to-slate-900/5 rounded-xl p-4 border-l-4 border-cyan-400">
+                                <div class="text-sm text-gray-600 mb-1">Proyecto:</div>
+                                <div class="font-semibold text-gray-900">Data Repair for SAP Database</div>
+                            </div>
+                            
+                            <div class="bg-gradient-to-r from-slate-800/5 to-slate-900/5 rounded-xl p-4 border-l-4 border-cyan-400">
+                                <div class="text-sm text-gray-600 mb-1">Solicitante:</div>
+                                <div class="font-semibold text-gray-900">Francisco Letelier</div>
+                            </div>
+                        </div>
+                        
+                        <div class="space-y-4">
+                            <div class="bg-gradient-to-r from-slate-800/5 to-slate-900/5 rounded-xl p-4 border-l-4 border-emerald-400">
+                                <div class="text-sm text-gray-600 mb-1">Contratante:</div>
+                                <div class="font-semibold text-gray-900">CJG Consultores</div>
+                            </div>
+                            
+                            <div class="bg-gradient-to-r from-slate-800/5 to-slate-900/5 rounded-xl p-4 border-l-4 border-emerald-400">
+                                <div class="text-sm text-gray-600 mb-1">Clientes DB:</div>
+                                <div class="font-semibold text-gray-900">ARTEL y KAUFMANN</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Activity Table Agosto -->
+                <div class="bg-white rounded-2xl p-8 border border-cyan-200 mb-12">
+                    <h2 class="text-3xl font-bold text-gray-900 mb-8 text-center">
+                        Horas Utilizadas - Agosto 2025
+                    </h2>
+                    
+                    <div class="overflow-x-auto">
+                        <table class="w-full border-collapse text-sm">
+                            <thead>
+                                <tr class="bg-gradient-to-r from-cyan-400/10 to-emerald-500/10">
+                                    <th class="border border-cyan-200 px-4 py-3 text-left font-semibold text-gray-900">Fecha</th>
+                                    <th class="border border-cyan-200 px-4 py-3 text-center font-semibold text-gray-900">Inicio</th>
+                                    <th class="border border-cyan-200 px-4 py-3 text-center font-semibold text-gray-900">Término</th>
+                                    <th class="border border-cyan-200 px-4 py-3 text-center font-semibold text-gray-900">Duración</th>
+                                    <th class="border border-cyan-200 px-4 py-3 text-left font-semibold text-gray-900">Actividad</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <!-- Viernes 1 -->
+                                <tr class="hover:bg-cyan-50 hover:border-cyan-300 transition-colors">
+                                    <td class="border border-cyan-200 px-4 py-3 font-medium text-gray-900">Viernes 1</td>
+                                    <td class="border border-cyan-200 px-4 py-3 text-center">9:30</td>
+                                    <td class="border border-cyan-200 px-4 py-3 text-center">12:30</td>
+                                    <td class="border border-cyan-200 px-4 py-3 text-center font-semibold">3</td>
+                                    <td class="border border-cyan-200 px-4 py-3">Export de structs de tablas que pesan más de 1GB - Import de MSEG</td>
+                                </tr>
+                                
+                                <!-- Sábado 2 -->
+                                <tr class="hover:bg-cyan-50 hover:border-cyan-300 transition-colors">
+                                    <td class="border border-cyan-200 px-4 py-3 font-medium text-gray-900">Sábado 2</td>
+                                    <td class="border border-cyan-200 px-4 py-3 text-center">12:30</td>
+                                    <td class="border border-cyan-200 px-4 py-3 text-center">14:00</td>
+                                    <td class="border border-cyan-200 px-4 py-3 text-center font-semibold">1.5</td>
+                                    <td class="border border-cyan-200 px-4 py-3">Llamado Oscar - DB en migración log al 95%</td>
+                                </tr>
+                                
+                                <!-- Lunes 4 -->
+                                <tr class="hover:bg-cyan-50 hover:border-cyan-300 transition-colors">
+                                    <td class="border border-cyan-200 px-4 py-3 font-medium text-gray-900">Lunes 4</td>
+                                    <td class="border border-cyan-200 px-4 py-3 text-center">11:00</td>
+                                    <td class="border border-cyan-200 px-4 py-3 text-center">12:00</td>
+                                    <td class="border border-cyan-200 px-4 py-3 text-center font-semibold">1</td>
+                                    <td class="border border-cyan-200 px-4 py-3">Reunión ARTEL</td>
+                                </tr>
+                                <tr class="hover:bg-cyan-50 hover:border-cyan-300 transition-colors">
+                                    <td class="border border-cyan-200 px-4 py-3"></td>
+                                    <td class="border border-cyan-200 px-4 py-3 text-center">12:00</td>
+                                    <td class="border border-cyan-200 px-4 py-3 text-center">12:30</td>
+                                    <td class="border border-cyan-200 px-4 py-3 text-center font-semibold">0.5</td>
+                                    <td class="border border-cyan-200 px-4 py-3">Reunión planificación CJG</td>
+                                </tr>
+                                <tr class="hover:bg-cyan-50 hover:border-cyan-300 transition-colors">
+                                    <td class="border border-cyan-200 px-4 py-3"></td>
+                                    <td class="border border-cyan-200 px-4 py-3 text-center">21:00</td>
+                                    <td class="border border-cyan-200 px-4 py-3 text-center">23:30</td>
+                                    <td class="border border-cyan-200 px-4 py-3 text-center font-semibold">2.5</td>
+                                    <td class="border border-cyan-200 px-4 py-3">Scripting para truncate/import de las tablas que pesan más de 1GB</td>
+                                </tr>
+                                
+                                <!-- Martes 5 -->
+                                <tr class="hover:bg-cyan-50 hover:border-cyan-300 transition-colors">
+                                    <td class="border border-cyan-200 px-4 py-3 font-medium text-gray-900">Martes 5</td>
+                                    <td class="border border-cyan-200 px-4 py-3 text-center">9:30</td>
+                                    <td class="border border-cyan-200 px-4 py-3 text-center">12:00</td>
+                                    <td class="border border-cyan-200 px-4 py-3 text-center font-semibold">2.5</td>
+                                    <td class="border border-cyan-200 px-4 py-3">Revisión de import con instalación base de sap. Reconstrucción de tablas con columnas faltantes</td>
+                                </tr>
+                                <tr class="hover:bg-cyan-50 hover:border-cyan-300 transition-colors">
+                                    <td class="border border-cyan-200 px-4 py-3"></td>
+                                    <td class="border border-cyan-200 px-4 py-3 text-center">13:00</td>
+                                    <td class="border border-cyan-200 px-4 py-3 text-center">13:30</td>
+                                    <td class="border border-cyan-200 px-4 py-3 text-center font-semibold">0.5</td>
+                                    <td class="border border-cyan-200 px-4 py-3">Reunión CJG - Se decide copiar DB DESARROLLO ya que tendrá las mismas estructuras de tablas</td>
+                                </tr>
+                                <tr class="hover:bg-cyan-50 hover:border-cyan-300 transition-colors">
+                                    <td class="border border-cyan-200 px-4 py-3"></td>
+                                    <td class="border border-cyan-200 px-4 py-3 text-center">20:00</td>
+                                    <td class="border border-cyan-200 px-4 py-3 text-center">21:00</td>
+                                    <td class="border border-cyan-200 px-4 py-3 text-center font-semibold">1</td>
+                                    <td class="border border-cyan-200 px-4 py-3">2do proceso de carga en nueva DB</td>
+                                </tr>
+                                
+                                <!-- Miércoles 6 -->
+                                <tr class="hover:bg-cyan-50 hover:border-cyan-300 transition-colors">
+                                    <td class="border border-cyan-200 px-4 py-3 font-medium text-gray-900">Miércoles 6</td>
+                                    <td class="border border-cyan-200 px-4 py-3 text-center">9:00</td>
+                                    <td class="border border-cyan-200 px-4 py-3 text-center">14:00</td>
+                                    <td class="border border-cyan-200 px-4 py-3 text-center font-semibold">5</td>
+                                    <td class="border border-cyan-200 px-4 py-3">Revisión de segundo import con lentitud, se inicia 3er import + mejora iops discos</td>
+                                </tr>
+                                <tr class="hover:bg-cyan-50 hover:border-cyan-300 transition-colors">
+                                    <td class="border border-cyan-200 px-4 py-3"></td>
+                                    <td class="border border-cyan-200 px-4 py-3 text-center">17:30</td>
+                                    <td class="border border-cyan-200 px-4 py-3 text-center">18:30</td>
+                                    <td class="border border-cyan-200 px-4 py-3 text-center font-semibold">1</td>
+                                    <td class="border border-cyan-200 px-4 py-3">Llamada Alen por IOWAIT en SQL SERVER</td>
+                                </tr>
+                                
+                                <!-- Jueves 7 -->
+                                <tr class="hover:bg-cyan-50 hover:border-cyan-300 transition-colors">
+                                    <td class="border border-cyan-200 px-4 py-3 font-medium text-gray-900">Jueves 7</td>
+                                    <td class="border border-cyan-200 px-4 py-3 text-center">9:30</td>
+                                    <td class="border border-cyan-200 px-4 py-3 text-center">13:30</td>
+                                    <td class="border border-cyan-200 px-4 py-3 text-center font-semibold">4</td>
+                                    <td class="border border-cyan-200 px-4 py-3">Medición metricas import 3 - Analisis para optimización de nuevo import</td>
+                                </tr>
+                                <tr class="hover:bg-cyan-50 hover:border-cyan-300 transition-colors">
+                                    <td class="border border-cyan-200 px-4 py-3"></td>
+                                    <td class="border border-cyan-200 px-4 py-3 text-center">14:00</td>
+                                    <td class="border border-cyan-200 px-4 py-3 text-center">16:30</td>
+                                    <td class="border border-cyan-200 px-4 py-3 text-center font-semibold">2.5</td>
+                                    <td class="border border-cyan-200 px-4 py-3">Script para import de tablas faltantes - Monitoreo de proceso total</td>
+                                </tr>
+                                <tr class="hover:bg-cyan-50 hover:border-cyan-300 transition-colors">
+                                    <td class="border border-cyan-200 px-4 py-3"></td>
+                                    <td class="border border-cyan-200 px-4 py-3 text-center">23:30</td>
+                                    <td class="border border-cyan-200 px-4 py-3 text-center">01:00</td>
+                                    <td class="border border-cyan-200 px-4 py-3 text-center font-semibold">1.5</td>
+                                    <td class="border border-cyan-200 px-4 py-3">Llamada por incidente en Kaufmann</td>
+                                </tr>
+                                
+                                <!-- Viernes 8 -->
+                                <tr class="hover:bg-cyan-50 hover:border-cyan-300 transition-colors">
+                                    <td class="border border-cyan-200 px-4 py-3 font-medium text-gray-900">Viernes 8</td>
+                                    <td class="border border-cyan-200 px-4 py-3 text-center">9:30</td>
+                                    <td class="border border-cyan-200 px-4 py-3 text-center">12:00</td>
+                                    <td class="border border-cyan-200 px-4 py-3 text-center font-semibold">2.5</td>
+                                    <td class="border border-cyan-200 px-4 py-3">Revisión incidente - Renombre y reconstrucción de tablas con alta data sin mantención historica</td>
+                                </tr>
+                                <tr class="hover:bg-cyan-50 hover:border-cyan-300 transition-colors">
+                                    <td class="border border-cyan-200 px-4 py-3"></td>
+                                    <td class="border border-cyan-200 px-4 py-3 text-center">12:00</td>
+                                    <td class="border border-cyan-200 px-4 py-3 text-center">15:00</td>
+                                    <td class="border border-cyan-200 px-4 py-3 text-center font-semibold">3</td>
+                                    <td class="border border-cyan-200 px-4 py-3">Revisión de tablas 3er proceso de importación - Analisis de optimización proceso</td>
+                                </tr>
+                                <tr class="hover:bg-cyan-50 hover:border-cyan-300 transition-colors">
+                                    <td class="border border-cyan-200 px-4 py-3"></td>
+                                    <td class="border border-cyan-200 px-4 py-3 text-center">16:00</td>
+                                    <td class="border border-cyan-200 px-4 py-3 text-center">17:00</td>
+                                    <td class="border border-cyan-200 px-4 py-3 text-center font-semibold">1</td>
+                                    <td class="border border-cyan-200 px-4 py-3">Reconfiguración instancia, movimiento de tablas en nuevo disco - Inicio 4to proceso de import optimizado</td>
+                                </tr>
+                                <tr class="hover:bg-cyan-50 hover:border-cyan-300 transition-colors">
+                                    <td class="border border-cyan-200 px-4 py-3"></td>
+                                    <td class="border border-cyan-200 px-4 py-3 text-center">17:00</td>
+                                    <td class="border border-cyan-200 px-4 py-3 text-center">17:30</td>
+                                    <td class="border border-cyan-200 px-4 py-3 text-center font-semibold">0.5</td>
+                                    <td class="border border-cyan-200 px-4 py-3">Reunión Kaufmann declaran que encolamiento disminuyo, por lo tanto el cambio implementado corrigio el error</td>
+                                </tr>
+                                <tr class="hover:bg-cyan-50 hover:border-cyan-300 transition-colors">
+                                    <td class="border border-cyan-200 px-4 py-3"></td>
+                                    <td class="border border-cyan-200 px-4 py-3 text-center">18:00</td>
+                                    <td class="border border-cyan-200 px-4 py-3 text-center">19:00</td>
+                                    <td class="border border-cyan-200 px-4 py-3 text-center font-semibold">1</td>
+                                    <td class="border border-cyan-200 px-4 py-3">Formulación de propuesta para RFC cambio en producción</td>
+                                </tr>
+                                
+                                <!-- Sábado 9 -->
+                                <tr class="hover:bg-cyan-50 hover:border-cyan-300 transition-colors">
+                                    <td class="border border-cyan-200 px-4 py-3 font-medium text-gray-900">Sábado 9</td>
+                                    <td class="border border-cyan-200 px-4 py-3 text-center">01:00</td>
+                                    <td class="border border-cyan-200 px-4 py-3 text-center">02:30</td>
+                                    <td class="border border-cyan-200 px-4 py-3 text-center font-semibold">1.5</td>
+                                    <td class="border border-cyan-200 px-4 py-3">Implementanción de cambio de proceso de limpiado de tabla raw_data. Agendamiento de job más pruebas de ejecución</td>
+                                </tr>
+                                <tr class="hover:bg-cyan-50 hover:border-cyan-300 transition-colors">
+                                    <td class="border border-cyan-200 px-4 py-3"></td>
+                                    <td class="border border-cyan-200 px-4 py-3 text-center">11:00</td>
+                                    <td class="border border-cyan-200 px-4 py-3 text-center">12:00</td>
+                                    <td class="border border-cyan-200 px-4 py-3 text-center font-semibold">1</td>
+                                    <td class="border border-cyan-200 px-4 py-3">Monitoreo de proceso import, más re-ejecución de tablas fallidas</td>
+                                </tr>
+                                
+                                <!-- Domingo 10 -->
+                                <tr class="hover:bg-cyan-50 hover:border-cyan-300 transition-colors">
+                                    <td class="border border-cyan-200 px-4 py-3 font-medium text-gray-900">Domingo 10</td>
+                                    <td class="border border-cyan-200 px-4 py-3 text-center">12:00</td>
+                                    <td class="border border-cyan-200 px-4 py-3 text-center">13:00</td>
+                                    <td class="border border-cyan-200 px-4 py-3 text-center font-semibold">1</td>
+                                    <td class="border border-cyan-200 px-4 py-3">Revisión de import más reconstrucción de indices faltantes</td>
+                                </tr>
+                                <tr class="hover:bg-cyan-50 hover:border-cyan-300 transition-colors">
+                                    <td class="border border-cyan-200 px-4 py-3"></td>
+                                    <td class="border border-cyan-200 px-4 py-3 text-center">17:00</td>
+                                    <td class="border border-cyan-200 px-4 py-3 text-center">19:00</td>
+                                    <td class="border border-cyan-200 px-4 py-3 text-center font-semibold">2</td>
+                                    <td class="border border-cyan-200 px-4 py-3">Incidente LOG Transaccional MSQL en KAUFMANN. Reconfiguración de archivos + desactivacion de CDC solicitado por cliente</td>
+                                </tr>
+                                
+                                <!-- Lunes 11 -->
+                                <tr class="hover:bg-cyan-50 hover:border-cyan-300 transition-colors">
+                                    <td class="border border-cyan-200 px-4 py-3 font-medium text-gray-900">Lunes 11</td>
+                                    <td class="border border-cyan-200 px-4 py-3 text-center">9:30</td>
+                                    <td class="border border-cyan-200 px-4 py-3 text-center">14:00</td>
+                                    <td class="border border-cyan-200 px-4 py-3 text-center font-semibold">4.5</td>
+                                    <td class="border border-cyan-200 px-4 py-3">Revisión de 4to import optimizado. Generación de informe + import de tabla fallida CDHDR</td>
+                                </tr>
+                                <tr class="hover:bg-cyan-50 hover:border-cyan-300 transition-colors">
+                                    <td class="border border-cyan-200 px-4 py-3"></td>
+                                    <td class="border border-cyan-200 px-4 py-3 text-center">15:00</td>
+                                    <td class="border border-cyan-200 px-4 py-3 text-center">15:30</td>
+                                    <td class="border border-cyan-200 px-4 py-3 text-center font-semibold">0.5</td>
+                                    <td class="border border-cyan-200 px-4 py-3">Reunión entrega import</td>
+                                </tr>
+                                <tr class="hover:bg-cyan-50 hover:border-cyan-300 transition-colors">
+                                    <td class="border border-cyan-200 px-4 py-3"></td>
+                                    <td class="border border-cyan-200 px-4 py-3 text-center">17:00</td>
+                                    <td class="border border-cyan-200 px-4 py-3 text-center">19:30</td>
+                                    <td class="border border-cyan-200 px-4 py-3 text-center font-semibold">2.5</td>
+                                    <td class="border border-cyan-200 px-4 py-3">Import de tablas faltantes, quedaron fuera del batch inicial</td>
+                                </tr>
+                                
+                                <!-- Martes 12 -->
+                                <tr class="hover:bg-cyan-50 hover:border-cyan-300 transition-colors">
+                                    <td class="border border-cyan-200 px-4 py-3 font-medium text-gray-900">Martes 12</td>
+                                    <td class="border border-cyan-200 px-4 py-3 text-center">9:30</td>
+                                    <td class="border border-cyan-200 px-4 py-3 text-center">10:30</td>
+                                    <td class="border border-cyan-200 px-4 py-3 text-center font-semibold">1</td>
+                                    <td class="border border-cyan-200 px-4 py-3">Informe recomendación AWS</td>
+                                </tr>
+                                <tr class="hover:bg-cyan-50 hover:border-cyan-300 transition-colors">
+                                    <td class="border border-cyan-200 px-4 py-3"></td>
+                                    <td class="border border-cyan-200 px-4 py-3 text-center">11:00</td>
+                                    <td class="border border-cyan-200 px-4 py-3 text-center">11:30</td>
+                                    <td class="border border-cyan-200 px-4 py-3 text-center font-semibold">0.5</td>
+                                    <td class="border border-cyan-200 px-4 py-3">Reunión ARTEL</td>
+                                </tr>
+                                
+                                <!-- Miércoles 13 -->
+                                <tr class="hover:bg-cyan-50 hover:border-cyan-300 transition-colors">
+                                    <td class="border border-cyan-200 px-4 py-3 font-medium text-gray-900">Miércoles 13</td>
+                                    <td class="border border-cyan-200 px-4 py-3 text-center">9:00</td>
+                                    <td class="border border-cyan-200 px-4 py-3 text-center">14:00</td>
+                                    <td class="border border-cyan-200 px-4 py-3 text-center font-semibold">5</td>
+                                    <td class="border border-cyan-200 px-4 py-3">Implementación de shells más cuadratura de objetos</td>
+                                </tr>
+                                <tr class="hover:bg-cyan-50 hover:border-cyan-300 transition-colors">
+                                    <td class="border border-cyan-200 px-4 py-3"></td>
+                                    <td class="border border-cyan-200 px-4 py-3 text-center">16:00</td>
+                                    <td class="border border-cyan-200 px-4 py-3 text-center">17:00</td>
+                                    <td class="border border-cyan-200 px-4 py-3 text-center font-semibold">1</td>
+                                    <td class="border border-cyan-200 px-4 py-3">Reunión con Paulo para revisión de errores reportados en Kaufmann backups SQL SERVER</td>
+                                </tr>
+                                <tr class="hover:bg-cyan-50 hover:border-cyan-300 transition-colors">
+                                    <td class="border border-cyan-200 px-4 py-3"></td>
+                                    <td class="border border-cyan-200 px-4 py-3 text-center">18:00</td>
+                                    <td class="border border-cyan-200 px-4 py-3 text-center">20:00</td>
+                                    <td class="border border-cyan-200 px-4 py-3 text-center font-semibold">2</td>
+                                    <td class="border border-cyan-200 px-4 py-3">Activación de CDC en DB Productiva Kaufmann</td>
+                                </tr>
+                                <tr class="hover:bg-cyan-50 hover:border-cyan-300 transition-colors">
+                                    <td class="border border-cyan-200 px-4 py-3"></td>
+                                    <td class="border border-cyan-200 px-4 py-3 text-center">23:00</td>
+                                    <td class="border border-cyan-200 px-4 py-3 text-center">00:30</td>
+                                    <td class="border border-cyan-200 px-4 py-3 text-center font-semibold">1.5</td>
+                                    <td class="border border-cyan-200 px-4 py-3">Inicio Proceso de export de data</td>
+                                </tr>
+                                
+                                <!-- Jueves 14 -->
+                                <tr class="hover:bg-cyan-50 hover:border-cyan-300 transition-colors">
+                                    <td class="border border-cyan-200 px-4 py-3 font-medium text-gray-900">Jueves 14</td>
+                                    <td class="border border-cyan-200 px-4 py-3 text-center">7:30</td>
+                                    <td class="border border-cyan-200 px-4 py-3 text-center">11:30</td>
+                                    <td class="border border-cyan-200 px-4 py-3 text-center font-semibold">4</td>
+                                    <td class="border border-cyan-200 px-4 py-3">Configuración de instancia/server para import - Inicio proceso import masivo</td>
+                                </tr>
+                                <tr class="hover:bg-cyan-50 hover:border-cyan-300 transition-colors">
+                                    <td class="border border-cyan-200 px-4 py-3"></td>
+                                    <td class="border border-cyan-200 px-4 py-3 text-center">13:00</td>
+                                    <td class="border border-cyan-200 px-4 py-3 text-center">14:00</td>
+                                    <td class="border border-cyan-200 px-4 py-3 text-center font-semibold">1</td>
+                                    <td class="border border-cyan-200 px-4 py-3">Validación inicial de tiempos, avance proceso</td>
+                                </tr>
+                                <tr class="hover:bg-cyan-50 hover:border-cyan-300 transition-colors">
+                                    <td class="border border-cyan-200 px-4 py-3"></td>
+                                    <td class="border border-cyan-200 px-4 py-3 text-center">17:00</td>
+                                    <td class="border border-cyan-200 px-4 py-3 text-center">19:00</td>
+                                    <td class="border border-cyan-200 px-4 py-3 text-center font-semibold">2</td>
+                                    <td class="border border-cyan-200 px-4 py-3">Revisión de import. Medición de tiempos y comparación con proceso anterior. Se entrega estimación de termino a Javier</td>
+                                </tr>
+                                
+                                <!-- Viernes 15 -->
+                                <tr class="hover:bg-cyan-50 hover:border-cyan-300 transition-colors">
+                                    <td class="border border-cyan-200 px-4 py-3 font-medium text-gray-900">Viernes 15</td>
+                                    <td class="border border-cyan-200 px-4 py-3 text-center">7:30</td>
+                                    <td class="border border-cyan-200 px-4 py-3 text-center">12:30</td>
+                                    <td class="border border-cyan-200 px-4 py-3 text-center font-semibold">5</td>
+                                    <td class="border border-cyan-200 px-4 py-3">Cuadratura de objetos. Reconstrucción de tabla con diferencia de columnas e import de data. Reconstrucción de indices secundarios de tablas más pesadas (VBFA, BSIS, ACCTIT, LIPS, COEP, GLPCA, MSEG, BKPF)</td>
+                                </tr>
+                                
+                                <!-- Sábado 16 -->
+                                <tr class="hover:bg-cyan-50 hover:border-cyan-300 transition-colors">
+                                    <td class="border border-cyan-200 px-4 py-3 font-medium text-gray-900">Sábado 16</td>
+                                    <td class="border border-cyan-200 px-4 py-3 text-center">14:00</td>
+                                    <td class="border border-cyan-200 px-4 py-3 text-center">15:00</td>
+                                    <td class="border border-cyan-200 px-4 py-3 text-center font-semibold">1</td>
+                                    <td class="border border-cyan-200 px-4 py-3">Seguimiento de actividad</td>
+                                </tr>
+                                
+                                <!-- Lunes 18 -->
+                                <tr class="hover:bg-cyan-50 hover:border-cyan-300 transition-colors">
+                                    <td class="border border-cyan-200 px-4 py-3 font-medium text-gray-900">Lunes 18</td>
+                                    <td class="border border-cyan-200 px-4 py-3 text-center">16:30</td>
+                                    <td class="border border-cyan-200 px-4 py-3 text-center">20:00</td>
+                                    <td class="border border-cyan-200 px-4 py-3 text-center font-semibold">3.5</td>
+                                    <td class="border border-cyan-200 px-4 py-3">Desactivar CDC en DB Productiva. Revisión y respaldo de LOG en server con poco espacio en Disco para log transaccional SQL SERVER. Actividad en conjunto con Oscar</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    
+                    <!-- Total Hours Agosto -->
+                    <div class="mt-8 flex justify-center">
+                        <div class="bg-gradient-to-r from-cyan-400/10 to-emerald-500/10 rounded-lg p-6 border-2 border-cyan-300 min-w-64">
+                            <div class="flex justify-between items-center text-xl font-bold">
+                                <span class="text-gray-900">Total Horas Agosto:</span>
+                                <span class="bg-gradient-to-r from-cyan-400 to-emerald-500 bg-clip-text text-transparent text-2xl">
+                                    75
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Activity Table Julio -->
+                <div class="bg-white rounded-2xl p-8 border border-cyan-200 mb-12">
+                    <h2 class="text-3xl font-bold text-gray-900 mb-8 text-center">
+                        Horas Utilizadas - Julio 2025
+                    </h2>
+                    
+                    <div class="overflow-x-auto">
+                        <table class="w-full border-collapse text-sm">
+                            <thead>
+                                <tr class="bg-gradient-to-r from-cyan-400/10 to-emerald-500/10">
+                                    <th class="border border-cyan-200 px-4 py-3 text-left font-semibold text-gray-900">Fecha</th>
+                                    <th class="border border-cyan-200 px-4 py-3 text-center font-semibold text-gray-900">Inicio</th>
+                                    <th class="border border-cyan-200 px-4 py-3 text-center font-semibold text-gray-900">Término</th>
+                                    <th class="border border-cyan-200 px-4 py-3 text-center font-semibold text-gray-900">Duración</th>
+                                    <th class="border border-cyan-200 px-4 py-3 text-left font-semibold text-gray-900">Actividad</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <!-- Lunes 21 -->
+                                <tr class="hover:bg-cyan-50 hover:border-cyan-300 transition-colors">
+                                    <td class="border border-cyan-200 px-4 py-3 font-medium text-gray-900">Lunes 21</td>
+                                    <td class="border border-cyan-200 px-4 py-3 text-center">14:00</td>
+                                    <td class="border border-cyan-200 px-4 py-3 text-center">15:00</td>
+                                    <td class="border border-cyan-200 px-4 py-3 text-center font-semibold">1</td>
+                                    <td class="border border-cyan-200 px-4 py-3">Reunión inicial</td>
+                                </tr>
+                                <tr class="hover:bg-cyan-50 hover:border-cyan-300 transition-colors">
+                                    <td class="border border-cyan-200 px-4 py-3"></td>
+                                    <td class="border border-cyan-200 px-4 py-3 text-center">15:00</td>
+                                    <td class="border border-cyan-200 px-4 py-3 text-center">21:30</td>
+                                    <td class="border border-cyan-200 px-4 py-3 text-center font-semibold">6.5</td>
+                                    <td class="border border-cyan-200 px-4 py-3">Revisión inicial de la DB. Repair DB EKET. Identificación de archivos dañados</td>
+                                </tr>
+                                
+                                <!-- Martes 22 -->
+                                <tr class="hover:bg-cyan-50 hover:border-cyan-300 transition-colors">
+                                    <td class="border border-cyan-200 px-4 py-3 font-medium text-gray-900">Martes 22</td>
+                                    <td class="border border-cyan-200 px-4 py-3 text-center">10:00</td>
+                                    <td class="border border-cyan-200 px-4 py-3 text-center">14:00</td>
+                                    <td class="border border-cyan-200 px-4 py-3 text-center font-semibold">4</td>
+                                    <td class="border border-cyan-200 px-4 py-3">Revisión de objetos dañados no registrados en DBCHECK. Prueba de repair completa DB.</td>
+                                </tr>
+                                
+                                <!-- Miércoles 23 -->
+                                <tr class="hover:bg-cyan-50 hover:border-cyan-300 transition-colors">
+                                    <td class="border border-cyan-200 px-4 py-3 font-medium text-gray-900">Miércoles 23</td>
+                                    <td class="border border-cyan-200 px-4 py-3 text-center">14:00</td>
+                                    <td class="border border-cyan-200 px-4 py-3 text-center">18:00</td>
+                                    <td class="border border-cyan-200 px-4 py-3 text-center font-semibold">4</td>
+                                    <td class="border border-cyan-200 px-4 py-3">Pruebas de integridad. Movimiento de objetos a Filegroups. Pruebas de eliminación de files en filegroups</td>
+                                </tr>
+                                
+                                <!-- Jueves 24 -->
+                                <tr class="hover:bg-cyan-50 hover:border-cyan-300 transition-colors">
+                                    <td class="border border-cyan-200 px-4 py-3 font-medium text-gray-900">Jueves 24</td>
+                                    <td class="border border-cyan-200 px-4 py-3 text-center">8:00</td>
+                                    <td class="border border-cyan-200 px-4 py-3 text-center">13:00</td>
+                                    <td class="border border-cyan-200 px-4 py-3 text-center font-semibold">5</td>
+                                    <td class="border border-cyan-200 px-4 py-3">Exportación de tablas grandes + imports para medición de tiempos objetos dañados. Repair full continua en ejecución</td>
+                                </tr>
+                                
+                                <!-- Viernes 25 -->
+                                <tr class="hover:bg-cyan-50 hover:border-cyan-300 transition-colors">
+                                    <td class="border border-cyan-200 px-4 py-3 font-medium text-gray-900">Viernes 25</td>
+                                    <td class="border border-cyan-200 px-4 py-3 text-center">12:45</td>
+                                    <td class="border border-cyan-200 px-4 py-3 text-center">13:45</td>
+                                    <td class="border border-cyan-200 px-4 py-3 text-center font-semibold">1</td>
+                                    <td class="border border-cyan-200 px-4 py-3">Reunión planificación actividad fin de semana</td>
+                                </tr>
+                                
+                                <!-- Sábado 26 -->
+                                <tr class="hover:bg-cyan-50 hover:border-cyan-300 transition-colors">
+                                    <td class="border border-cyan-200 px-4 py-3 font-medium text-gray-900">Sábado 26</td>
+                                    <td class="border border-cyan-200 px-4 py-3 text-center">11:00</td>
+                                    <td class="border border-cyan-200 px-4 py-3 text-center">14:00</td>
+                                    <td class="border border-cyan-200 px-4 py-3 text-center font-semibold">3</td>
+                                    <td class="border border-cyan-200 px-4 py-3">Exportación lógica de la DB Completa</td>
+                                </tr>
+                                
+                                <!-- Domingo 27 -->
+                                <tr class="hover:bg-cyan-50 hover:border-cyan-300 transition-colors">
+                                    <td class="border border-cyan-200 px-4 py-3 font-medium text-gray-900">Domingo 27</td>
+                                    <td class="border border-cyan-200 px-4 py-3 text-center">10:00</td>
+                                    <td class="border border-cyan-200 px-4 py-3 text-center">10:30</td>
+                                    <td class="border border-cyan-200 px-4 py-3 text-center font-semibold">0.5</td>
+                                    <td class="border border-cyan-200 px-4 py-3">Monitoreo de progreso export masivo</td>
+                                </tr>
+                                
+                                <!-- Lunes 28 -->
+                                <tr class="hover:bg-cyan-50 hover:border-cyan-300 transition-colors">
+                                    <td class="border border-cyan-200 px-4 py-3 font-medium text-gray-900">Lunes 28</td>
+                                    <td class="border border-cyan-200 px-4 py-3 text-center">9:00</td>
+                                    <td class="border border-cyan-200 px-4 py-3 text-center">10:00</td>
+                                    <td class="border border-cyan-200 px-4 py-3 text-center font-semibold">1</td>
+                                    <td class="border border-cyan-200 px-4 py-3">Revisión Actividad de exportación masiva</td>
+                                </tr>
+                                <tr class="hover:bg-cyan-50 hover:border-cyan-300 transition-colors">
+                                    <td class="border border-cyan-200 px-4 py-3"></td>
+                                    <td class="border border-cyan-200 px-4 py-3 text-center">11:00</td>
+                                    <td class="border border-cyan-200 px-4 py-3 text-center">12:00</td>
+                                    <td class="border border-cyan-200 px-4 py-3 text-center font-semibold">1</td>
+                                    <td class="border border-cyan-200 px-4 py-3">Reunión</td>
+                                </tr>
+                                <tr class="hover:bg-cyan-50 hover:border-cyan-300 transition-colors">
+                                    <td class="border border-cyan-200 px-4 py-3"></td>
+                                    <td class="border border-cyan-200 px-4 py-3 text-center">15:00</td>
+                                    <td class="border border-cyan-200 px-4 py-3 text-center">17:00</td>
+                                    <td class="border border-cyan-200 px-4 py-3 text-center font-semibold">2</td>
+                                    <td class="border border-cyan-200 px-4 py-3">Implementación de Exportación de DDL masiva DB</td>
+                                </tr>
+                                
+                                <!-- Martes 29 -->
+                                <tr class="hover:bg-cyan-50 hover:border-cyan-300 transition-colors">
+                                    <td class="border border-cyan-200 px-4 py-3 font-medium text-gray-900">Martes 29</td>
+                                    <td class="border border-cyan-200 px-4 py-3 text-center">11:00</td>
+                                    <td class="border border-cyan-200 px-4 py-3 text-center">12:00</td>
+                                    <td class="border border-cyan-200 px-4 py-3 text-center font-semibold">1</td>
+                                    <td class="border border-cyan-200 px-4 py-3">Revisión de progreso exportación masivo DDL</td>
+                                </tr>
+                                <tr class="hover:bg-cyan-50 hover:border-cyan-300 transition-colors">
+                                    <td class="border border-cyan-200 px-4 py-3"></td>
+                                    <td class="border border-cyan-200 px-4 py-3 text-center">23:00</td>
+                                    <td class="border border-cyan-200 px-4 py-3 text-center">0:00</td>
+                                    <td class="border border-cyan-200 px-4 py-3 text-center font-semibold">1</td>
+                                    <td class="border border-cyan-200 px-4 py-3">Reunión extraordinaria noche con equipo SAP</td>
+                                </tr>
+                                
+                                <!-- Miércoles 30 -->
+                                <tr class="hover:bg-cyan-50 hover:border-cyan-300 transition-colors">
+                                    <td class="border border-cyan-200 px-4 py-3 font-medium text-gray-900">Miércoles 30</td>
+                                    <td class="border border-cyan-200 px-4 py-3 text-center">9:00</td>
+                                    <td class="border border-cyan-200 px-4 py-3 text-center">9:30</td>
+                                    <td class="border border-cyan-200 px-4 py-3 text-center font-semibold">0.5</td>
+                                    <td class="border border-cyan-200 px-4 py-3">Reunión</td>
+                                </tr>
+                                <tr class="hover:bg-cyan-50 hover:border-cyan-300 transition-colors">
+                                    <td class="border border-cyan-200 px-4 py-3"></td>
+                                    <td class="border border-cyan-200 px-4 py-3 text-center">9:30</td>
+                                    <td class="border border-cyan-200 px-4 py-3 text-center">11:30</td>
+                                    <td class="border border-cyan-200 px-4 py-3 text-center font-semibold">2</td>
+                                    <td class="border border-cyan-200 px-4 py-3">Instalación SqlPackage + Pruebas de export DDL</td>
+                                </tr>
+                                <tr class="hover:bg-cyan-50 hover:border-cyan-300 transition-colors">
+                                    <td class="border border-cyan-200 px-4 py-3"></td>
+                                    <td class="border border-cyan-200 px-4 py-3 text-center">17:30</td>
+                                    <td class="border border-cyan-200 px-4 py-3 text-center">18:00</td>
+                                    <td class="border border-cyan-200 px-4 py-3 text-center font-semibold">0.5</td>
+                                    <td class="border border-cyan-200 px-4 py-3">Reunión</td>
+                                </tr>
+                                
+                                <!-- Jueves 31 -->
+                                <tr class="hover:bg-cyan-50 hover:border-cyan-300 transition-colors">
+                                    <td class="border border-cyan-200 px-4 py-3 font-medium text-gray-900">Jueves 31</td>
+                                    <td class="border border-cyan-200 px-4 py-3 text-center">9:00</td>
+                                    <td class="border border-cyan-200 px-4 py-3 text-center">12:00</td>
+                                    <td class="border border-cyan-200 px-4 py-3 text-center font-semibold">3</td>
+                                    <td class="border border-cyan-200 px-4 py-3">DDL tablas más de 1 GB</td>
+                                </tr>
+                                <tr class="hover:bg-cyan-50 hover:border-cyan-300 transition-colors">
+                                    <td class="border border-cyan-200 px-4 py-3"></td>
+                                    <td class="border border-cyan-200 px-4 py-3 text-center">14:00</td>
+                                    <td class="border border-cyan-200 px-4 py-3 text-center">16:00</td>
+                                    <td class="border border-cyan-200 px-4 py-3 text-center font-semibold">2</td>
+                                    <td class="border border-cyan-200 px-4 py-3">Import Tablas más de 1 GB</td>
+                                </tr>
+                                <tr class="hover:bg-cyan-50 hover:border-cyan-300 transition-colors">
+                                    <td class="border border-cyan-200 px-4 py-3"></td>
+                                    <td class="border border-cyan-200 px-4 py-3 text-center">18:00</td>
+                                    <td class="border border-cyan-200 px-4 py-3 text-center">19:30</td>
+                                    <td class="border border-cyan-200 px-4 py-3 text-center font-semibold">1.5</td>
+                                    <td class="border border-cyan-200 px-4 py-3">Scripting para export de DDL manual de todas las tablas</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    
+                    <!-- Total Hours Julio -->
+                    <div class="mt-8 flex justify-center">
+                        <div class="bg-gradient-to-r from-cyan-400/10 to-emerald-500/10 rounded-lg p-6 border-2 border-cyan-300 min-w-64">
+                            <div class="flex justify-between items-center text-xl font-bold">
+                                <span class="text-gray-900">Total Horas Julio:</span>
+                                <span class="bg-gradient-to-r from-cyan-400 to-emerald-500 bg-clip-text text-transparent text-2xl">
+                                    40.5
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Total General -->
+                <div class="bg-white rounded-2xl p-8 border border-cyan-200 mb-12">
+                    <div class="text-center">
+                        <h3 class="text-2xl font-bold text-gray-900 mb-6">
+                            Resumen Total del Proyecto
+                        </h3>
+                        <div class="grid md:grid-cols-3 gap-6">
+                            <div class="bg-gradient-to-r from-cyan-400/10 to-emerald-500/10 rounded-lg p-6 border-2 border-cyan-300">
+                                <div class="text-lg font-bold text-gray-900 mb-2">Horas Agosto</div>
+                                <div class="text-3xl bg-gradient-to-r from-cyan-400 to-emerald-500 bg-clip-text text-transparent font-bold">
+                                    75
+                                </div>
+                            </div>
+                            <div class="bg-gradient-to-r from-cyan-400/10 to-emerald-500/10 rounded-lg p-6 border-2 border-cyan-300">
+                                <div class="text-lg font-bold text-gray-900 mb-2">Horas Julio</div>
+                                <div class="text-3xl bg-gradient-to-r from-cyan-400 to-emerald-500 bg-clip-text text-transparent font-bold">
+                                    40.5
+                                </div>
+                            </div>
+                            <div class="bg-gradient-to-r from-purple-400/10 to-pink-500/10 rounded-lg p-6 border-2 border-purple-300">
+                                <div class="text-lg font-bold text-gray-900 mb-2">Total General</div>
+                                <div class="text-4xl bg-gradient-to-r from-purple-400 to-pink-500 bg-clip-text text-transparent font-bold">
+                                    115.5
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Contact CTA -->
+                <div class="text-center mt-12">
+                    <div class="bg-white rounded-2xl p-8 border border-cyan-200">
+                        <h3 class="text-2xl font-bold text-gray-900 mb-4">
+                            ¿Necesitas más información?
+                        </h3>
+                        <p class="text-gray-700 mb-6 max-w-2xl mx-auto">
+                            Para consultas adicionales sobre el proyecto o reportes detallados, no dudes en contactarme.
+                        </p>
+                        <a href="https://wa.me/56966416942" target="_blank" 
+                           class="inline-flex items-center bg-gradient-to-r from-cyan-400 to-emerald-500 text-gray-900 px-6 py-3 rounded-lg font-bold text-lg hover:from-cyan-300 hover:to-emerald-600 transition-all duration-200 shadow-lg hover:shadow-cyan-500/25">
+                            <svg class="w-6 h-6 mr-2" fill="currentColor" viewBox="0 0 24 24">
+                                <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893A11.821 11.821 0 0020.051 3.488"/>
+                            </svg>
+                            Contactar por WhatsApp
+                        </a>
+                    </div>
+                </div>
+                
+            </div>
+        </section>
+        
+    </main>
+    
+    <!-- Footer (cargado dinámicamente) -->
+    <div id="footer"></div>
+    
+    <!-- JavaScript -->
+    <script src="js/main.js"></script>
+    
+</body>
+</html>

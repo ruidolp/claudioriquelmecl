@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Valores Consultoría - Claudio Riquelme DBA Senior</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="min-h-screen bg-gray-50">
+    <main class="pt-16 p-4 max-w-6xl mx-auto">
+        <h1 class="text-4xl font-bold text-center text-gray-900 mb-10">Valores Consultoría Ingeniería en Chile</h1>
+
+        <section class="bg-white p-6 rounded-xl border border-cyan-200 mb-10">
+            <h2 class="text-2xl font-bold text-gray-900 mb-6 text-center">Tabla de Valores por Rangos</h2>
+            <table class="w-full border-collapse">
+                <thead>
+                    <tr class="bg-cyan-100">
+                        <th class="border px-4 py-2 text-left">Rango de Horas</th>
+                        <th class="border px-4 py-2 text-left">Valor por Hora (UF)</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr class="hover:bg-gray-50">
+                        <td class="border px-4 py-2">1 - 20 horas</td>
+                        <td class="border px-4 py-2">2.0 UF</td>
+                    </tr>
+                    <tr class="hover:bg-gray-50">
+                        <td class="border px-4 py-2">21 - 80 horas</td>
+                        <td class="border px-4 py-2">1.2 UF</td>
+                    </tr>
+                    <tr class="hover:bg-gray-50">
+                        <td class="border px-4 py-2">81 - 160 horas</td>
+                        <td class="border px-4 py-2">0.7 UF</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <div class="mt-6 bg-cyan-50 p-4 rounded-lg border-l-4 border-emerald-400">
+                <p class="text-gray-700">
+                    <strong>¿Cómo se calcula?</strong><br>
+                    Este modelo aplica un sistema escalonado marginal: cada tramo de horas se cobra según su tarifa.
+                    Por ejemplo, si contratas 90 horas: 20h x 2.0 UF + 60h x 1.2 UF + 10h x 0.7 UF.
+                </p>
+            </div>
+        </section>
+
+        <section class="bg-white p-6 rounded-xl border border-cyan-200">
+            <h2 class="text-2xl font-bold text-gray-900 mb-6 text-center">Calculadora de Presupuesto</h2>
+            <div class="grid md:grid-cols-2 gap-8">
+                <div>
+                    <label for="hours" class="block font-medium text-gray-700 mb-2">Cantidad de Horas del Proyecto</label>
+                    <input id="hours" type="number" min="1" max="160" value="40"
+                        class="w-full p-3 border border-cyan-300 rounded mb-4">
+
+                    <label for="uf-value" class="block font-medium text-gray-700 mb-2">Valor UF Actual (CLP)</label>
+                    <input id="uf-value" type="number" min="1" value="39000"
+                        class="w-full p-3 border border-cyan-300 rounded mb-4">
+
+                    <button onclick="calculateBudget()"
+                        class="w-full bg-cyan-500 text-white font-bold py-3 rounded hover:bg-cyan-600">
+                        Calcular Presupuesto
+                    </button>
+                </div>
+
+                <div id="calculation-result" class="bg-cyan-50 p-4 rounded-lg text-gray-700">
+                    <p class="text-center text-gray-500">Ingresa valores y presiona Calcular</p>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <script>
+        function calculateBudget() {
+            const hours = parseInt(document.getElementById('hours').value);
+            const ufValue = parseInt(document.getElementById('uf-value').value);
+            const resultDiv = document.getElementById('calculation-result');
+
+            if (!hours || !ufValue || hours <= 0 || ufValue <= 0) {
+                resultDiv.innerHTML = `<p class='text-red-500'>Por favor ingresa valores válidos.</p>`;
+                return;
+            }
+
+            if (hours > 160) {
+                resultDiv.innerHTML = `<p class='text-amber-600'>Para proyectos mayores a 160 horas, contáctame directamente.</p>`;
+                return;
+            }
+
+            const tramo1 = Math.min(20, hours);
+            const tramo2 = Math.max(0, Math.min(80, hours) - 20);
+            const tramo3 = Math.max(0, hours - 80);
+
+            const ufTotal = (tramo1 * 2.0) + (tramo2 * 1.2) + (tramo3 * 0.7);
+            const subtotalCLP = ufTotal * ufValue;
+            const impuesto = subtotalCLP * 0.145;
+            const total = subtotalCLP + impuesto;
+
+            resultDiv.innerHTML = `
+                <div class="space-y-3">
+                    <div><strong>Horas ingresadas:</strong> ${hours}</div>
+                    <div><strong>UF Total:</strong> ${ufTotal.toFixed(2)} UF</div>
+                    <div><strong>Subtotal:</strong> $${subtotalCLP.toLocaleString('es-CL')}</div>
+                    <div><strong>Impuesto 14.5%:</strong> $${impuesto.toLocaleString('es-CL')}</div>
+                    <div class="text-xl font-bold text-gray-900 border-t pt-2">Total a pagar: $${total.toLocaleString('es-CL')}</div>
+                    <div class="text-sm text-gray-500">(Incluye modelo escalonado marginal por tramos)</div>
+                </div>
+            `;
+        }
+
+        document.getElementById('hours').addEventListener('input', calculateBudget);
+        document.getElementById('uf-value').addEventListener('input', calculateBudget);
+        calculateBudget();
+    </script>
+</body>
+</html>
+

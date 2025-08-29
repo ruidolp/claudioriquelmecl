@@ -1,0 +1,437 @@
+ <!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Simulador de Costos por Fallas de DB - Claudio Riquelme DBA Senior</title>
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/simulator.css">
+</head>
+<body class="min-h-screen bg-gray-50">
+    
+    <!-- Header (cargado dinámicamente) -->
+    <div id="header"></div>
+    
+    <!-- Contenido principal -->
+    <main class="pt-16">
+        
+        <!-- Simulator Section -->
+        <section class="py-20 px-4 sm:px-6 lg:px-8">
+            <div class="mx-auto max-w-7xl">
+                
+                <!-- Hero -->
+                <div class="text-center mb-16">
+                    <h1 class="text-4xl font-bold text-gray-900 mb-6 sm:text-5xl">
+                        ⚡ Simulador de Pérdidas por falla DB
+                    </h1>
+                    <p class="text-xl text-gray-700 max-w-3xl mx-auto mb-8">
+                        Impacto económico de una arquitectura con y sin failover automático
+                    </p>
+                    <div class="w-20 h-1 bg-gradient-to-r from-cyan-400 to-emerald-500 mx-auto"></div>
+                </div>
+                
+                <!-- Inputs Section -->
+                <div class="input-container bg-white rounded-lg px-4 py-3 border border-cyan-200 mb-8 max-w-4xl mx-auto">
+                    <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-4 items-end">
+                        <div>
+                            <label for="operationsPerMinute" class="block text-sm font-bold text-gray-900 mb-2">
+                                Operaciones por minuto
+                            </label>
+                            <input type="number" id="operationsPerMinute" 
+                                   class="input-field w-full px-3 py-2 text-sm border border-cyan-300 rounded focus:border-cyan-500 focus:outline-none transition-colors" 
+                                   placeholder="Ej: 1000" min="1" value="1000">
+                        </div>
+                        <div>
+                            <label for="avgOperationValue" class="block text-sm font-bold text-gray-900 mb-2">
+                                Valor promedio por operación (USD)
+                            </label>
+                            <input type="number" id="avgOperationValue" 
+                                   class="input-field w-full px-3 py-2 text-sm border border-cyan-300 rounded focus:border-cyan-500 focus:outline-none transition-colors" 
+                                   placeholder="Ej: 15.50" min="0.01" step="0.01" value="15.50">
+                        </div>
+                        <div class="sm:col-span-2 lg:col-span-1 flex justify-center">
+                            <button id="simulateFailure" class="btn-primary px-4 py-2 text-sm whitespace-nowrap">
+                                🔥 SIMULAR&nbsp;FALLA 🔥
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Simulation Section -->
+                <div class="grid lg:grid-cols-2 gap-8 mb-8">
+                    
+                    <!-- WITH HA - Patroni -->
+                    <div class="simulator-container">
+                        <div class="p-6">
+                            <h3 class="text-2xl font-bold text-center mb-6 text-green-400">
+                                ✓ HA AUTOMÁTICO - PATRONI
+                            </h3>
+                            
+                            <!-- Transaction Graph -->
+                            <div class="mb-6">
+                                <h4 class="text-sm font-bold text-gray-300 mb-2">Transacciones por minuto</h4>
+                                <canvas id="haTransactionGraph" width="400" height="120" class="transaction-graph"></canvas>
+                            </div>
+                            
+                            <!-- Terminal Log -->
+                            <div class="simulator-screen mb-4">
+                                <div class="terminal-header">
+                                    <span class="terminal-title">PostgreSQL HA Cluster - Patroni</span>
+                                </div>
+                                <div id="haTerminalLog" class="terminal-content">
+                                    <div class="terminal-line">postgres@cluster-01:~$ systemctl status patroni</div>
+                                    <div class="terminal-line text-green-400">● patroni.service - PostgreSQL Patroni</div>
+                                    <div class="terminal-line text-green-400">   Active: active (running)</div>
+                                    <div class="terminal-line">postgres@cluster-01:~$ _</div>
+                                </div>
+                            </div>
+                            
+                            <!-- Status -->
+                            <div class="text-center">
+                                <div id="haTimer" class="text-2xl font-bold mb-2 terminal-cursor">⏱ Tiempo: 0 seg</div>
+                                <div id="haStatus" class="text-lg text-green-400">✓ Sistema operativo</div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- WITHOUT HA -->
+                    <div class="simulator-container">
+                        <div class="p-6">
+                            <h3 class="text-2xl font-bold text-center mb-6 text-red-400">
+                                ⚠ SIN HA AUTOMÁTICO
+                            </h3>
+                            
+                            <!-- Transaction Graph -->
+                            <div class="mb-6">
+                                <h4 class="text-sm font-bold text-gray-300 mb-2">Transacciones por minuto</h4>
+                                <canvas id="noHaTransactionGraph" width="400" height="120" class="transaction-graph"></canvas>
+                            </div>
+                            
+                            <!-- Terminal Log -->
+                            <div class="simulator-screen mb-4">
+                                <div class="terminal-header">
+                                    <span class="terminal-title">PostgreSQL Standalone</span>
+                                </div>
+                                <div id="noHaTerminalLog" class="terminal-content">
+                                    <div class="terminal-line">postgres@db-server:~$ systemctl status postgresql</div>
+                                    <div class="terminal-line text-green-400">● postgresql.service - PostgreSQL RDBMS</div>
+                                    <div class="terminal-line text-green-400">   Active: active (running)</div>
+                                    <div class="terminal-line">postgres@db-server:~$ _</div>
+                                </div>
+                            </div>
+                            
+                            <!-- Status -->
+                            <div class="text-center">
+                                <div id="noHaTimer" class="text-2xl font-bold mb-2 terminal-cursor">⏱ Tiempo: 0 min</div>
+                                <div id="noHaStatus" class="text-lg text-green-400">✓ Sistema operativo</div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                </div>
+                
+                <!-- Cost Analysis Section -->
+                <div id="costAnalysis" class="bg-white rounded-2xl p-8 border border-cyan-200 mb-8 hidden">
+                    <h3 class="text-3xl font-bold text-center mb-8 text-gray-900">
+                        💰 Análisis de Pérdidas
+                    </h3>
+                    
+                    <div class="grid lg:grid-cols-2 gap-8">
+                        
+                        <!-- HA Costs -->
+                        <div class="cost-section ha-costs">
+                            <h4 class="text-2xl font-bold text-green-600 mb-6 text-center">
+                                ✓ CON HA - PATRONI
+                            </h4>
+                            <div class="space-y-3">
+                                <div class="cost-item">
+                                    <span class="cost-label">Pérdida directa por transacciones:</span>
+                                    <span id="haDirect" class="cost-value">$0</span>
+                                </div>
+                                <div class="cost-item">
+                                    <span class="cost-label">Costo operacional de recuperación:</span>
+                                    <span id="haOperational" class="cost-value">$0</span>
+                                </div>
+                                <div class="cost-item">
+                                    <span class="cost-label">Penalizaciones por SLA:</span>
+                                    <span id="haSla" class="cost-value">$0</span>
+                                </div>
+                                <div class="cost-item">
+                                    <span class="cost-label">Costo reputacional estimado:</span>
+                                    <span id="haReputation" class="cost-value">$0</span>
+                                </div>
+                                <div class="cost-item">
+                                    <span class="cost-label">Pérdida de productividad:</span>
+                                    <span id="haProductivity" class="cost-value">$0</span>
+                                </div>
+                                <div class="cost-total">
+                                    <span class="cost-label font-bold">TOTAL:</span>
+                                    <span id="haTotal" class="cost-value font-bold text-xl">$0</span>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- No HA Costs -->
+                        <div class="cost-section no-ha-costs">
+                            <h4 class="text-2xl font-bold text-red-600 mb-6 text-center">
+                                ⚠ SIN HA
+                            </h4>
+                            <div class="space-y-3">
+                                <div class="cost-item">
+                                    <span class="cost-label">Pérdida directa por transacciones:</span>
+                                    <span id="noHaDirect" class="cost-value">$0</span>
+                                </div>
+                                <div class="cost-item">
+                                    <span class="cost-label">Costo operacional de recuperación:</span>
+                                    <span id="noHaOperational" class="cost-value">$0</span>
+                                </div>
+                                <div class="cost-item">
+                                    <span class="cost-label">Penalizaciones por SLA:</span>
+                                    <span id="noHaSla" class="cost-value">$0</span>
+                                </div>
+                                <div class="cost-item">
+                                    <span class="cost-label">Costo reputacional estimado:</span>
+                                    <span id="noHaReputation" class="cost-value">$0</span>
+                                </div>
+                                <div class="cost-item">
+                                    <span class="cost-label">Pérdida de productividad:</span>
+                                    <span id="noHaProductivity" class="cost-value">$0</span>
+                                </div>
+                                <div class="cost-total">
+                                    <span class="cost-label font-bold">TOTAL:</span>
+                                    <span id="noHaTotal" class="cost-value font-bold text-xl">$0</span>
+                                </div>
+                            </div>
+                        </div>
+                        
+                    </div>
+                    
+                    <!-- Savings Summary -->
+                    <div class="mt-8 p-6 bg-gradient-to-r from-gray-800/90 to-gray-900/90 rounded-xl border border-cyan-400/30">
+                        <div class="text-center">
+                            <h5 class="text-2xl font-bold text-cyan-400 mb-4">
+                                ⚡ Ahorro con High Availability Automático
+                            </h5>
+                            <div class="text-4xl font-bold mb-2">
+                                <span id="totalSavings" class="text-green-400">$0</span>
+                            </div>
+                            <div class="text-lg text-gray-300">
+                                <span id="savingsPercentage" class="font-bold text-cyan-400">0%</span> menos pérdidas con HA Automático
+                            </div>
+                            <div class="mt-4 text-sm text-gray-400">
+                                ROI estimado en la primera falla evitada
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Implementation Info -->
+                <div class="bg-gradient-to-r from-gray-800 to-gray-900 rounded-2xl p-6 sm:p-8 mb-8">
+                    <div class="max-w-5xl mx-auto">
+                        <h3 class="text-xl sm:text-2xl font-bold text-white mb-4 text-center">
+                            ▣ Implementación Real en Sector Bancario
+                        </h3>
+                        <div class="text-gray-300 leading-relaxed space-y-3 text-sm sm:text-base">
+                            <p>
+                                Solución de alta disponibilidad implementada con éxito en el sector bancario, basada en 
+                                <strong class="text-cyan-400">PostgreSQL</strong> 17, 
+                                <strong class="text-cyan-400">Patroni</strong> y 
+                                <strong class="text-cyan-400">HAProxy</strong> 
+                                sobre una arquitectura de 3 nodos coordinados con ETCD.
+                            </p>
+                            
+                            <p>
+                                El cliente operaba con streaming replication y failover manual, lo que generaba tiempos de recuperación largos y exposición a errores humanos.
+                            </p>
+                            
+                            <div class="bg-gray-800/50 rounded-lg p-3 sm:p-4 border-l-4 border-cyan-400 mt-4">
+                                <h4 class="text-base sm:text-lg font-bold text-cyan-400 mb-2">Con la nueva arquitectura:</h4>
+                                <ul class="space-y-1 text-gray-300 text-sm sm:text-base">
+                                    <li>▶ [Se automatizó el failover, reduciendo el RTO a segundos]</li>
+                                    <li>▶ [Patroni garantiza monitoreo constante y toma de decisiones autónoma]</li>
+                                    <li>▶ [HAProxy redirige conexiones sin cambios en las apps]</li>
+                                    <li>▶ [ETCD asegura consenso confiable entre nodos]</li>
+                                </ul>
+                            </div>
+                            
+                            <p class="pt-2">
+                                Hoy el cliente opera con una plataforma resiliente, moderna y lista para escalar, con mínima intervención operativa.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Multi-Engine Support -->
+                <div class="bg-gradient-to-r from-gray-800 to-gray-900 rounded-2xl p-6 sm:p-8">
+                    <div class="max-w-5xl mx-auto">
+                        <h3 class="text-xl sm:text-2xl font-bold text-white mb-4 text-center">
+                            ⚙️ Experiencia Multi-Motor
+                        </h3>
+                        <div class="text-gray-300 leading-relaxed space-y-3 text-sm sm:text-base">
+                            
+                            <p>
+                                Cuento con experiencia implementando soluciones similares en otros motores ampliamente utilizados:
+                            </p>
+                            
+                            <!-- Database Engines Grid -->
+                            <div class="grid sm:grid-cols-2 gap-4 mt-6">
+                                
+                                <!-- Oracle -->
+                                <div class="bg-gray-800/70 rounded-lg p-4 border border-cyan-400/30 hover:border-cyan-400/60 transition-all duration-300">
+                                    <div class="flex items-start space-x-3">
+                                        <div class="flex-shrink-0 w-12 h-12 bg-gradient-to-br from-cyan-400 to-emerald-500 rounded-lg flex items-center justify-center">
+                                            <svg class="w-6 h-6 text-gray-900" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 7v10c0 2.21 3.582 4 8 4s8-1.79 8-4V7M4 7c0 2.21 3.582 4 8 4s8-1.79 8-4M4 7c0-2.21 3.582-4 8-4s8 1.79 8 4"></path>
+                                            </svg>
+                                        </div>
+                                        <div>
+                                            <h4 class="font-bold text-cyan-400 mb-1">Oracle</h4>
+                                            <p class="text-gray-300 text-sm">
+                                                <em>Oracle Global Data Services (GDS)</em> y <em>Data Guard</em> para balanceo, failover y recuperación transparente
+                                            </p>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- SQL Server -->
+                                <div class="bg-gray-800/70 rounded-lg p-4 border border-cyan-400/30 hover:border-cyan-400/60 transition-all duration-300">
+                                    <div class="flex items-start space-x-3">
+                                        <div class="flex-shrink-0 w-12 h-12 bg-gradient-to-br from-cyan-400 to-emerald-500 rounded-lg flex items-center justify-center">
+                                            <svg class="w-6 h-6 text-gray-900" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 12h14M5 12a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v4a2 2 0 01-2 2M5 12a2 2 0 00-2 2v4a2 2 0 002 2h14a2 2 0 002-2v-4a2 2 0 00-2-2"></path>
+                                            </svg>
+                                        </div>
+                                        <div>
+                                            <h4 class="font-bold text-cyan-400 mb-1">SQL Server</h4>
+                                            <p class="text-gray-300 text-sm">
+                                                <em>Always On Availability Groups</em>, asegurando conmutación automática y mínima pérdida de servicio
+                                            </p>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- MongoDB -->
+                                <div class="bg-gray-800/70 rounded-lg p-4 border border-cyan-400/30 hover:border-cyan-400/60 transition-all duration-300">
+                                    <div class="flex items-start space-x-3">
+                                        <div class="flex-shrink-0 w-12 h-12 bg-gradient-to-br from-cyan-400 to-emerald-500 rounded-lg flex items-center justify-center">
+                                            <svg class="w-6 h-6 text-gray-900" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z"></path>
+                                            </svg>
+                                        </div>
+                                        <div>
+                                            <h4 class="font-bold text-cyan-400 mb-1">MongoDB</h4>
+                                            <p class="text-gray-300 text-sm">
+                                                <em>Replica Sets</em>, permitiendo failover automático nativo y consistencia entre réplicas
+                                            </p>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- DB2 -->
+                                <div class="bg-gray-800/70 rounded-lg p-4 border border-cyan-400/30 hover:border-cyan-400/60 transition-all duration-300">
+                                    <div class="flex items-start space-x-3">
+                                        <div class="flex-shrink-0 w-12 h-12 bg-gradient-to-br from-cyan-400 to-emerald-500 rounded-lg flex items-center justify-center">
+                                            <svg class="w-6 h-6 text-gray-900" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"></path>
+                                            </svg>
+                                        </div>
+                                        <div>
+                                            <h4 class="font-bold text-cyan-400 mb-1">DB2</h4>
+                                            <p class="text-gray-300 text-sm">
+                                                Implementando HADR con failover automático usando TSA o Pacemaker
+                                            </p>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- MySQL -->
+                                <div class="bg-gray-800/70 rounded-lg p-4 border border-cyan-400/30 hover:border-cyan-400/60 transition-all duration-300">
+                                    <div class="flex items-start space-x-3">
+                                        <div class="flex-shrink-0 w-12 h-12 bg-gradient-to-br from-cyan-400 to-emerald-500 rounded-lg flex items-center justify-center">
+                                            <svg class="w-6 h-6 text-gray-900" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 9l3 3-3 3m5 0h3M5 20h14a2 2 0 002-2V6a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+                                            </svg>
+                                        </div>
+                                        <div>
+                                            <h4 class="font-bold text-cyan-400 mb-1">MySQL</h4>
+                                            <p class="text-gray-300 text-sm">
+                                                <em>Replication + Orchestrator</em>: gestión y failover automático del nodo primario
+                                            </p>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Redis -->
+                                <div class="bg-gray-800/70 rounded-lg p-4 border border-cyan-400/30 hover:border-cyan-400/60 transition-all duration-300">
+                                    <div class="flex items-start space-x-3">
+                                        <div class="flex-shrink-0 w-12 h-12 bg-gradient-to-br from-cyan-400 to-emerald-500 rounded-lg flex items-center justify-center">
+                                            <svg class="w-6 h-6 text-gray-900" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path>
+                                            </svg>
+                                        </div>
+                                        <div>
+                                            <h4 class="font-bold text-cyan-400 mb-1">Redis</h4>
+                                            <p class="text-gray-300 text-sm">
+                                                <strong>Sentinel</strong>: failover automático, monitoreo y promoción entre nodos Redis
+                                            </p>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                            </div>
+                            
+                            <p class="pt-4">
+                                Cada motor tiene sus propias herramientas y mejores prácticas, y mi enfoque se adapta a la tecnología y necesidades de tu negocio.
+                            </p>
+                            
+                            <div class="text-center bg-gray-800/30 p-3 sm:p-4 rounded-lg border border-cyan-400/30 mt-4">
+                                <p class="text-cyan-400 text-sm sm:text-base mb-2">
+                                    ¿Quieres saber cómo lograr alta disponibilidad en tu entorno actual?
+                                </p>
+                                <strong class="text-base sm:text-lg">
+                                    <a href="contact.html" class="contact-link">Conversemos.</a>
+                                </strong>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+            </div>
+        </section>
+        
+    </main>
+    
+    <!-- Footer (cargado dinámicamente) -->
+    <div id="footer"></div>
+    
+    <!-- JavaScript -->
+    <script src="js/main.js"></script>
+    <script src="js/simulator.js"></script>
+    
+</body>
+</html>
+
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 

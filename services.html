@@ -1,0 +1,531 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Claudio Riquelme - DBA Senior & Arquitecto de Datos</title>
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body class="min-h-screen bg-gray-50">
+    
+    <!-- Header (cargado dinámicamente) -->
+    <div id="header"></div>
+    
+    <!-- Contenido principal -->
+    <main class="pt-16">
+        
+        <!-- Hero Section Simple -->
+        <section class="py-20 px-4 sm:px-6 lg:px-8">
+            <div class="mx-auto max-w-4xl text-center">
+                
+               		<h1 class="text-5xl font-bold text-gray-900 mb-0">
+                  Claudio Riquelme
+                </h1>
+
+                <h2 class="text-2xl text-gray-600 mb-8">
+                  Senior DBA – Data Architect & Engineer
+                </h2>
+                <div class="w-20 h-1 bg-gradient-to-r from-cyan-400 to-emerald-500 mx-auto mb-8"></div>
+                <p class="text-lg text-gray-700 mb-12 max-w-2xl mx-auto">
+                    +15 años impulsando entornos resilientes, escalables y preparados para el futuro.
+                </p>
+ 
+                
+                <!-- Botones de prueba -->
+                <div class="flex flex-col sm:flex-row gap-4 justify-center mb-16">
+                    <a href="contact.html" class="btn-primary text-center">
+                        Contactar Ahora
+                    </a>
+                    <button id="showExperienceModal" class="border-2 border-blue-600 text-blue-600 px-6 py-3 rounded-lg hover:bg-blue-50 transition-colors font-medium text-center">
+                        Mi Experiencia
+                    </button>
+                </div>
+                
+                <!-- Cards de prueba -->
+                <div class="mb-16">
+                    <div class="text-center mb-8">
+                        <h3 class="text-2xl font-bold text-gray-900">
+                            Experto en
+                        </h3>
+                    </div>
+                    <div class="grid md:grid-cols-3 gap-8">
+                        <div class="card">
+                            <div class="service-icon mx-auto">
+                                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path>
+                                </svg>
+                            </div>
+                            <h3 class="text-xl font-bold text-gray-900 mb-3 text-center">Alta Disponibilidad</h3>
+                            <p class="text-gray-600 text-center">
+                                Sistemas que nunca fallan. Arquitecturas robustas 
+                                para mantener tu negocio operativo 24/7.
+                            </p>
+                        </div>
+                        
+                        <div class="card">
+                            <div class="service-icon mx-auto">
+                                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.031 9-11.622 0-1.042-.133-2.052-.382-3.016z"></path>
+                                </svg>
+                            </div>
+                            <h3 class="text-xl font-bold text-gray-900 mb-3 text-center">Disaster Recovery</h3>
+                            <p class="text-gray-600 text-center">
+                                Planes de recuperación probados. RPO/RTO optimizados 
+                                para ambientes de misión crítica.
+                            </p>
+                        </div>
+                        
+                        <div class="card">
+                            <div class="service-icon mx-auto">
+                                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 9l3 3-3 3m5 0h3M5 20h14a2 2 0 002-2V6a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+                                </svg>
+                            </div>
+                            <h3 class="text-xl font-bold text-gray-900 mb-3 text-center">Migraciones</h3>
+                            <p class="text-gray-600 text-center">
+                                Transiciones seamless entre on-premise y cloud. 
+                                Estrategias probadas con cero downtime.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Texto adicional -->
+                <div class="bg-white rounded-2xl p-8 max-w-4xl mx-auto border border-cyan-200">
+                    <div class="text-center mb-8">
+                        <h3 class="text-3xl font-bold text-gray-900 mb-2">
+                            ¿Cuándo necesitas un experto en datos?
+                        </h3>
+                        <p class="text-xl font-medium text-gray-700">
+                            <strong>No solo cuando algo falla.</strong>
+                        </p>
+                    </div>
+
+                    <!-- Scenarios Grid -->
+                    <div class="grid md:grid-cols-2 gap-6 mb-8">
+                        <div class="bg-white rounded-xl p-6 border border-cyan-200 hover:border-cyan-400 transition-all duration-300 hover:shadow-lg">
+                            <div class="flex items-start space-x-4">
+                                <div class="flex-shrink-0 w-12 h-12 bg-gradient-to-br from-cyan-400 to-emerald-500 rounded-lg flex items-center justify-center">
+                                    <svg class="w-6 h-6 text-gray-900" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path>
+                                    </svg>
+                                </div>
+                                <div>
+                                    <h4 class="font-semibold text-gray-900 mb-2">OPTIMIZACIÓN</h4>
+                                    <p class="text-gray-600 text-sm">Quieres mejorar lo que ya tienes, pero no sabes por dónde empezar</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="bg-white rounded-xl p-6 border border-cyan-200 hover:border-cyan-400 transition-all duration-300 hover:shadow-lg">
+                            <div class="flex items-start space-x-4">
+                                <div class="flex-shrink-0 w-12 h-12 bg-gradient-to-br from-cyan-400 to-emerald-500 rounded-lg flex items-center justify-center">
+                                    <svg class="w-6 h-6 text-gray-900" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 11l5-5m0 0l5 5m-5-5v12"></path>
+                                    </svg>
+                                </div>
+                                <div>
+                                    <h4 class="font-semibold text-gray-900 mb-2">CRECIMIENTO</h4>
+                                    <p class="text-gray-600 text-sm">Tu infraestructura está creciendo y necesitas escalarla de forma segura</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="bg-white rounded-xl p-6 border border-cyan-200 hover:border-cyan-400 transition-all duration-300 hover:shadow-lg">
+                            <div class="flex items-start space-x-4">
+                                <div class="flex-shrink-0 w-12 h-12 bg-gradient-to-br from-cyan-400 to-emerald-500 rounded-lg flex items-center justify-center">
+                                    <svg class="w-6 h-6 text-gray-900" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 9l3 3-3 3m5 0h3M5 20h14a2 2 0 002-2V6a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+                                    </svg>
+                                </div>
+                                <div>
+                                    <h4 class="font-semibold text-gray-900 mb-2">MIGRACIONES</h4>
+                                    <p class="text-gray-600 text-sm">Estás evaluando una migración entre entornos on-premise y cloud</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="bg-white rounded-xl p-6 border border-cyan-200 hover:border-cyan-400 transition-all duration-300 hover:shadow-lg">
+                            <div class="flex items-start space-x-4">
+                                <div class="flex-shrink-0 w-12 h-12 bg-gradient-to-br from-cyan-400 to-emerald-500 rounded-lg flex items-center justify-center">
+                                    <svg class="w-6 h-6 text-gray-900" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"></path>
+                                    </svg>
+                                </div>
+                                <div>
+                                    <h4 class="font-semibold text-gray-900 mb-2">OPINIÓN EXPERTA</h4>
+                                    <p class="text-gray-600 text-sm">Estás evaluando nuevas tecnologías o arquitecturas y necesitas una segunda opinión</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="bg-white rounded-xl p-6 border border-cyan-200 hover:border-cyan-400 transition-all duration-300 hover:shadow-lg">
+                            <div class="flex items-start space-x-4">
+                                <div class="flex-shrink-0 w-12 h-12 bg-gradient-to-br from-cyan-400 to-emerald-500 rounded-lg flex items-center justify-center">
+                                    <svg class="w-6 h-6 text-gray-900" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"></path>
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                                    </svg>
+                                </div>
+                                <div>
+                                    <h4 class="font-semibold text-gray-900 mb-2">ADMINISTRACIÓN</h4>
+                                    <p class="text-gray-600 text-sm">Buscas optimizar el rendimiento, reducir caídas o reforzar la disponibilidad del sistema</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="bg-white rounded-xl p-6 border border-cyan-200 hover:border-cyan-400 transition-all duration-300 hover:shadow-lg">
+                            <div class="flex items-start space-x-4">
+                                <div class="flex-shrink-0 w-12 h-12 bg-gradient-to-br from-cyan-400 to-emerald-500 rounded-lg flex items-center justify-center">
+                                    <svg class="w-6 h-6 text-gray-900" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.031 9-11.622 0-1.042-.133-2.052-.382-3.016z"></path>
+                                    </svg>
+                                </div>
+                                <div>
+                                    <h4 class="font-semibold text-gray-900 mb-2">ALTA DISPONIBILIDAD</h4>
+                                    <p class="text-gray-600 text-sm">Buscas reducir el downtime de tus sistemas</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Action Cards -->
+                    <div class="grid md:grid-cols-2 gap-6 mb-8">
+                        <div class="bg-gradient-to-r from-slate-800/5 to-slate-900/5 rounded-xl p-6 border-l-4 border-cyan-400">
+                            <div class="flex items-center space-x-3 mb-3">
+                                <div class="w-10 h-10 bg-cyan-400 rounded-lg flex items-center justify-center">
+                                    <svg class="w-5 h-5 text-gray-900" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.031 9-11.622 0-1.042-.133-2.052-.382-3.016z"></path>
+                                    </svg>
+                                </div>
+                                <h4 class="font-bold text-gray-800">PREVENCIÓN</h4>
+                            </div>
+                            <p class="text-gray-700">
+                                Un experto en datos no solo resuelve problemas: <strong>evita que ocurran.</strong>
+                            </p>
+                        </div>
+
+                        <div class="bg-gradient-to-r from-slate-800/5 to-slate-900/5 rounded-xl p-6 border-l-4 border-emerald-400">
+                            <div class="flex items-center space-x-3 mb-3">
+                                <div class="w-10 h-10 bg-emerald-400 rounded-lg flex items-center justify-center">
+                                    <svg class="w-5 h-5 text-gray-900" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"></path>
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                                    </svg>
+                                </div>
+                                <h4 class="font-bold text-gray-800">RESOLUCIÓN EFECTIVA</h4>
+                            </div>
+                            <p class="text-gray-700">
+                                Si ya tienes problemas críticos, te ayudo a <strong>resolver incidentes</strong> y <strong>recuperar estabilidad rápidamente.</strong> Además de análisis de problemas históricos.
+                            </p>
+                        </div>
+                    </div>
+                    
+                    <!-- Stats -->
+                    <div class="grid grid-cols-3 gap-4 pt-6 border-t border-cyan-200">
+                        <div class="text-center">
+                            <div class="text-2xl font-bold text-blue-600">15+</div>
+                            <div class="text-sm text-gray-600">Años experiencia</div>
+                        </div>
+                        <div class="text-center">
+                            <div class="text-2xl font-bold text-blue-600">24/7</div>
+                            <div class="text-sm text-gray-600">Soporte crítico</div>
+                        </div>
+                        <div class="text-center">
+                            <div class="text-2xl font-bold text-blue-600">&lt;5min</div>
+                            <div class="text-sm text-gray-600">Tiempo respuesta</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Technologies Section -->
+                <div class="bg-white rounded-2xl p-8 mt-16 max-w-4xl mx-auto border border-cyan-200">
+                    <div class="text-center mb-8">
+                        <h3 class="text-3xl font-bold text-gray-900 mb-2">
+                            Stack Tecnológico
+                        </h3>
+                        <p class="text-lg text-gray-600">
+                            Amplia experiencia en las tecnologías más demandadas del mercado
+                        </p>
+                    </div>
+
+                    <!-- Tech Categories Carousel -->
+                    <div class="tech-carousel mb-8">
+                        <div class="overflow-hidden bg-gradient-to-r from-slate-800/5 to-slate-900/5 rounded-xl border border-cyan-200">
+                            <div class="tech-slider flex transition-transform duration-500 ease-in-out">
+                                <!-- Databases -->
+                                <div class="tech-category w-full flex-shrink-0 bg-gradient-to-r from-slate-800/5 to-slate-900/5">
+                                    <div class="border-b border-cyan-200 pb-4 mb-6">
+                                        <h4 class="text-xl font-bold text-gray-800 text-center flex items-center justify-center">
+                                            <div class="w-8 h-8 bg-gradient-to-br from-cyan-400 to-emerald-500 rounded-lg flex items-center justify-center mr-3">
+                                                <svg class="w-5 h-5 text-gray-900" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 7v10c0 2.21 3.582 4 8 4s8-1.79 8-4V7M4 7c0 2.21 3.582 4 8 4s8-1.79 8-4M4 7c0-2.21 3.582-4 8-4s8 1.79 8 4"></path>
+                                                </svg>
+                                            </div>
+                                            Bases de Datos
+                                        </h4>
+                                    </div>
+                                    <div class="grid grid-cols-2 md:grid-cols-4 gap-3">
+                                        <div class="tech-tag">ORACLE</div>
+                                        <div class="tech-tag">SQL SERVER</div>
+                                        <div class="tech-tag">PostgreSQL</div>
+                                        <div class="tech-tag">MariaDB</div>
+                                        <div class="tech-tag">MySQL</div>
+                                        <div class="tech-tag">Sybase ASE</div>
+                                        <div class="tech-tag">DB2</div>
+                                        <div class="tech-tag">Teradata</div>
+                                        <div class="tech-tag">Informix</div>
+                                        <div class="tech-tag">MongoDB</div>
+                                        <div class="tech-tag">Redis</div>
+                                        <div class="tech-tag">Amazon Aurora</div>
+                                        <div class="tech-tag">Azure SQL Database</div>
+                                        <div class="tech-tag">DynamoDB</div>
+                                        <div class="tech-tag">BigQuery</div>
+                                        <div class="tech-tag">Snowflake</div>
+                                    </div>
+                                </div>
+                                
+                                <!-- DevOps -->
+                                <div class="tech-category w-full flex-shrink-0 bg-gradient-to-r from-slate-800/5 to-slate-900/5">
+                                    <div class="border-b border-cyan-200 pb-4 mb-6">
+                                        <h4 class="text-xl font-bold text-gray-800 text-center flex items-center justify-center">
+                                            <div class="w-8 h-8 bg-gradient-to-br from-cyan-400 to-emerald-500 rounded-lg flex items-center justify-center mr-3">
+                                                <svg class="w-5 h-5 text-gray-900" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"></path>
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                                                </svg>
+                                            </div>
+                                            DevOps
+                                        </h4>
+                                    </div>
+                                    <div class="grid grid-cols-2 md:grid-cols-3 gap-3">
+                                        <div class="tech-tag">Terraform</div>
+                                        <div class="tech-tag">Docker</div>
+                                        <div class="tech-tag">Jenkins</div>
+                                        <div class="tech-tag">CI/CD</div>
+                                        <div class="tech-tag">GitHub</div>
+                                    </div>
+                                </div>
+                                
+                                <!-- Data Engineering -->
+                                <div class="tech-category w-full flex-shrink-0 bg-gradient-to-r from-slate-800/5 to-slate-900/5">
+                                    <div class="border-b border-cyan-200 pb-4 mb-6">
+                                        <h4 class="text-xl font-bold text-gray-800 text-center flex items-center justify-center">
+                                            <div class="w-8 h-8 bg-gradient-to-br from-cyan-400 to-emerald-500 rounded-lg flex items-center justify-center mr-3">
+                                                <svg class="w-5 h-5 text-gray-900" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M9 19l3 3m0 0l3-3m-3 3V10"></path>
+                                                </svg>
+                                            </div>
+                                            Data Engineering
+                                        </h4>
+                                    </div>
+                                    <div class="grid grid-cols-2 md:grid-cols-3 gap-3">
+                                        <div class="tech-tag">Apache Airflow</div>
+                                        <div class="tech-tag">Apache Kafka</div>
+                                        <div class="tech-tag">ODI</div>
+                                        <div class="tech-tag">SSIS</div>
+                                        <div class="tech-tag">DataStage</div>
+                                        <div class="tech-tag">GoldenGate</div>
+                                    </div>
+                                </div>
+                                
+                                <!-- Development -->
+                                <div class="tech-category w-full flex-shrink-0 bg-gradient-to-r from-slate-800/5 to-slate-900/5">
+                                    <div class="border-b border-cyan-200 pb-4 mb-6">
+                                        <h4 class="text-xl font-bold text-gray-800 text-center flex items-center justify-center">
+                                            <div class="w-8 h-8 bg-gradient-to-br from-cyan-400 to-emerald-500 rounded-lg flex items-center justify-center mr-3">
+                                                <svg class="w-5 h-5 text-gray-900" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4"></path>
+                                                </svg>
+                                            </div>
+                                            Development
+                                        </h4>
+                                    </div>
+                                    <div class="grid grid-cols-2 md:grid-cols-3 gap-3">
+                                        <div class="tech-tag">Python</div>
+                                        <div class="tech-tag">SQL</div>
+                                        <div class="tech-tag">Bash</div>
+                                        <div class="tech-tag">Javascript</div>
+                                        <div class="tech-tag">Perl</div>
+                                        <div class="tech-tag">C</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Carousel Controls -->
+                        <div class="flex justify-center mt-8 py-4 space-x-2">
+                            <button class="carousel-dot w-3 h-3 rounded-full bg-cyan-400 transition-colors duration-200" data-slide="0"></button>
+                            <button class="carousel-dot w-3 h-3 rounded-full bg-gray-300 hover:bg-cyan-300 transition-colors duration-200" data-slide="1"></button>
+                            <button class="carousel-dot w-3 h-3 rounded-full bg-gray-300 hover:bg-cyan-300 transition-colors duration-200" data-slide="2"></button>
+                            <button class="carousel-dot w-3 h-3 rounded-full bg-gray-300 hover:bg-cyan-300 transition-colors duration-200" data-slide="3"></button>
+                        </div>
+                    </div>
+
+                    <!-- Cloud Providers -->
+                    <div class="border-t border-cyan-200 pt-6 bg-gradient-to-r from-slate-800/5 to-slate-900/5 rounded-b-xl mt-6">
+                        <h4 class="text-xl font-bold text-gray-800 mb-6 text-center flex items-center justify-center">
+                            <svg class="w-6 h-6 mr-2 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"></path>
+                            </svg>
+                            Cloud Providers
+                        </h4>
+                        <div class="grid grid-cols-2 md:grid-cols-4 gap-4 px-4 pb-6">
+                            <!-- AWS -->
+                            <div class="cloud-provider flex flex-col items-center space-y-2 p-3">
+                                <div class="w-12 h-12 flex items-center justify-center">
+                                    <img src="images/aws.png" alt="AWS" class="w-full h-full object-contain">
+                                </div>
+                                <span class="font-medium text-gray-700 text-sm">AWS</span>
+                            </div>
+                            
+                            <!-- OCI -->
+                            <div class="cloud-provider flex flex-col items-center space-y-2 p-3">
+                                <div class="w-12 h-12 flex items-center justify-center">
+                                    <img src="images/oci.jpg" alt="Oracle Cloud" class="w-full h-full object-contain">
+                                </div>
+                                <span class="font-medium text-gray-700 text-sm">Oracle Cloud</span>
+                            </div>
+                            
+                            <!-- GCP -->
+                            <div class="cloud-provider flex flex-col items-center space-y-2 p-3">
+                                <div class="w-12 h-12 flex items-center justify-center">
+                                    <img src="images/gcp.png" alt="Google Cloud" class="w-full h-full object-contain">
+                                </div>
+                                <span class="font-medium text-gray-700 text-sm">Google Cloud</span>
+                            </div>
+                            
+                            <!-- Azure -->
+                            <div class="cloud-provider flex flex-col items-center space-y-2 p-3">
+                                <div class="w-12 h-12 flex items-center justify-center">
+                                    <img src="images/azure.png" alt="Microsoft Azure" class="w-full h-full object-contain">
+                                </div>
+                                <span class="font-medium text-gray-700 text-sm">Microsoft Azure</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+            </div>
+        </section>
+        
+    </main>
+    
+    <!-- Modal de Experiencia -->
+    <div id="experienceModal" class="fixed inset-0 bg-black bg-opacity-50 backdrop-blur-sm hidden z-50 flex items-center justify-center">
+        <div class="bg-white rounded-2xl p-6 sm:p-8 m-4 max-w-4xl max-h-[90vh] overflow-y-auto border border-cyan-200 relative">
+            <!-- Close Button -->
+            <button id="closeExperienceModal" class="absolute top-4 right-4 w-10 h-10 bg-gradient-to-br from-cyan-400 to-emerald-500 rounded-lg flex items-center justify-center hover:from-cyan-300 hover:to-emerald-600 transition-all duration-200">
+                <svg class="w-6 h-6 text-gray-900" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                </svg>
+            </button>
+            
+            <!-- Modal Content -->
+            <div class="pr-12">
+                <h2 class="text-3xl font-bold text-gray-900 mb-6 text-center">
+                    Mi Experiencia
+                </h2>
+                <div class="w-20 h-1 bg-gradient-to-r from-cyan-400 to-emerald-500 mx-auto mb-8"></div>
+                
+                <div class="space-y-6 text-gray-700 leading-relaxed">
+                    <p>
+                        Soy <strong>Ingeniero Informático</strong> titulado en la <strong>Pontificia Universidad Católica de Valparaíso</strong>, con más de 15 años de experiencia ayudando a empresas a resolver desafíos complejos en el mundo de los datos.
+                    </p>
+                    
+                    <p>
+                        Comencé mi carrera como DBA en entornos de misión crítica y, con el tiempo, expandí mi perfil hacia la ingeniería y arquitectura de datos. Hoy lidero proyectos de consultoría con un enfoque integral: desde la infraestructura y alta disponibilidad, hasta la integración, automatización y orquestación de flujos de datos.
+                    </p>
+                    
+                    <div class="bg-gradient-to-r from-slate-800/5 to-slate-900/5 rounded-xl p-6 border-l-4 border-cyan-400">
+                        <h3 class="text-xl font-bold text-gray-900 mb-4 text-center">
+                            Empresas de Alto Nivel que Confían en Mi Experiencia
+                        </h3>
+                        
+                        <!-- Companies Grid -->
+                        <div class="companies-grid grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3 text-sm">
+                            <div class="company-card bg-white rounded-lg p-3 border border-cyan-200 text-center font-medium text-cyan-400 hover:border-cyan-400 hover:text-cyan-300 transition-colors">
+                                Banco de Chile
+                            </div>
+                            <div class="company-card bg-white rounded-lg p-3 border border-cyan-200 text-center font-medium text-cyan-400 hover:border-cyan-400 hover:text-cyan-300 transition-colors">
+                                BCI
+                            </div>
+                            <div class="company-card bg-white rounded-lg p-3 border border-cyan-200 text-center font-medium text-cyan-400 hover:border-cyan-400 hover:text-cyan-300 transition-colors">
+                                Entel
+                            </div>
+                            <div class="company-card bg-white rounded-lg p-3 border border-cyan-200 text-center font-medium text-cyan-400 hover:border-cyan-400 hover:text-cyan-300 transition-colors">
+                                Banco Popular Dominicano
+                            </div>
+                            <div class="company-card bg-white rounded-lg p-3 border border-cyan-200 text-center font-medium text-cyan-400 hover:border-cyan-400 hover:text-cyan-300 transition-colors">
+                                Superintendencia Financiera Colombia
+                            </div>
+                            <div class="company-card bg-white rounded-lg p-3 border border-cyan-200 text-center font-medium text-cyan-400 hover:border-cyan-400 hover:text-cyan-300 transition-colors">
+                                Cardif
+                            </div>
+                            <div class="company-card bg-white rounded-lg p-3 border border-cyan-200 text-center font-medium text-cyan-400 hover:border-cyan-400 hover:text-cyan-300 transition-colors">
+                                Banco de Occidente
+                            </div>
+                            <div class="company-card bg-white rounded-lg p-3 border border-cyan-200 text-center font-medium text-cyan-400 hover:border-cyan-400 hover:text-cyan-300 transition-colors">
+                                Claro Chile
+                            </div>
+                            <div class="company-card bg-white rounded-lg p-3 border border-cyan-200 text-center font-medium text-cyan-400 hover:border-cyan-400 hover:text-cyan-300 transition-colors">
+                                Oracle Colombia
+                            </div>
+                            <div class="company-card bg-white rounded-lg p-3 border border-cyan-200 text-center font-medium text-cyan-400 hover:border-cyan-400 hover:text-cyan-300 transition-colors">
+                                Oracle México
+                            </div>
+                            <div class="company-card bg-white rounded-lg p-3 border border-cyan-200 text-center font-medium text-cyan-400 hover:border-cyan-400 hover:text-cyan-300 transition-colors">
+                                VTR
+                            </div>
+                            <div class="company-card bg-white rounded-lg p-3 border border-cyan-200 text-center font-medium text-cyan-400 hover:border-cyan-400 hover:text-cyan-300 transition-colors">
+                                Banco Internacional
+                            </div>
+                            <div class="company-card bg-white rounded-lg p-3 border border-cyan-200 text-center font-medium text-cyan-400 hover:border-cyan-400 hover:text-cyan-300 transition-colors">
+                                Unimarc
+                            </div>
+                            <div class="company-card bg-white rounded-lg p-3 border border-cyan-200 text-center font-medium text-cyan-400 hover:border-cyan-400 hover:text-cyan-300 transition-colors">
+                                Y muchas más...
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <p>
+                        Diseño soluciones robustas, escalables y alineadas con los objetivos del negocio, combinando experiencia técnica con una visión práctica y cercana al cliente.
+                    </p>
+                    
+                    <div class="text-center bg-gradient-to-r from-slate-800/5 to-slate-900/5 rounded-xl p-6 border-l-4 border-r-4 border-emerald-400 mt-6">
+                        <p class="text-lg font-medium text-gray-800">
+                            <strong>¿Tu empresa necesita modernizar su arquitectura de datos?</strong>
+                        </p>
+                        <p class="text-cyan-600 font-semibold mt-2">
+                            Estaré encantado de ayudarte.
+                        </p>
+                        
+                        <!-- CTA Button -->
+                        <div class="mt-6">
+                            <a href="contact.html" class="inline-flex items-center bg-gradient-to-r from-cyan-400 to-emerald-500 text-gray-900 px-6 py-3 rounded-lg font-bold hover:from-cyan-300 hover:to-emerald-600 transition-all duration-200 shadow-lg">
+                                <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"></path>
+                                </svg>
+                                Contactar Ahora
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Footer (cargado dinámicamente) -->
+    <div id="footer"></div>
+    
+    <!-- JavaScript -->
+    <script src="js/main.js"></script>
+    
+</body>
+</html>

@@ -1,0 +1,84 @@
+<!-- components/header.html -->
+<header class="fixed top-0 z-50 w-full border-b border-cyan-400/30 bg-slate-900/95 backdrop-blur-sm shadow-lg">
+  <nav class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+    <div class="flex h-16 items-center justify-between">
+      
+      <!-- Logo/Brand -->
+      <div class="flex items-center">
+        <a href="/" class="flex items-center space-x-2">
+          <div class="flex h-8 w-8 items-center justify-center rounded-lg bg-gradient-to-br from-cyan-400 to-emerald-500">
+            <span class="text-sm font-bold text-gray-900">CR</span>
+          </div>
+          <div class="hidden sm:block">
+            <span class="text-lg font-bold text-gray-100">Claudio Riquelme</span>
+            <div class="text-xs text-cyan-300">Senior DBA – Data Architect & Engineer</div>
+          </div>
+        </a>
+      </div>
+
+      <!-- Desktop Menu -->
+      <div class="hidden md:block">
+        <div class="ml-10 flex items-baseline space-x-4">
+          <a href="/" 
+             class="nav-link px-3 py-2 rounded-md text-sm font-medium transition-all duration-200 text-gray-300 hover:bg-cyan-500/10 hover:text-cyan-300 hover:shadow-sm hover:shadow-cyan-500/20">
+            Simulator
+          </a>
+          <a href="services.html" 
+             class="nav-link px-3 py-2 rounded-md text-sm font-medium transition-all duration-200 text-gray-300 hover:bg-cyan-500/10 hover:text-cyan-300 hover:shadow-sm hover:shadow-cyan-500/20">
+            Servicios
+          </a>
+          <a href="contact.html" 
+             class="nav-link px-3 py-2 rounded-md text-sm font-medium transition-all duration-200 text-gray-300 hover:bg-cyan-500/10 hover:text-cyan-300 hover:shadow-sm hover:shadow-cyan-500/20">
+            Contacto
+          </a>
+        </div>
+      </div>
+
+      <!-- CTA Button Desktop -->
+      <div class="hidden md:block">
+        <a href="contact.html" 
+           class="inline-flex items-center rounded-md bg-gradient-to-r from-cyan-400 to-emerald-500 px-4 py-2 text-sm font-bold text-gray-900 hover:from-cyan-300 hover:to-emerald-600 transition-all duration-200 shadow-lg hover:shadow-cyan-500/25 font-mono uppercase tracking-wide">
+          Trabajemos Juntos
+        </a>
+      </div>
+
+      <!-- Mobile menu button -->
+      <div class="md:hidden">
+        <button id="mobile-menu-btn" 
+                class="inline-flex items-center justify-center rounded-md p-2 text-gray-300 hover:bg-cyan-500/10 hover:text-cyan-300 focus:outline-none focus:ring-2 focus:ring-cyan-400">
+          <span class="sr-only">Abrir menú principal</span>
+          <svg id="menu-icon" class="block h-6 w-6" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5" />
+          </svg>
+          <svg id="close-icon" class="hidden h-6 w-6" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+          </svg>
+        </button>
+      </div>
+    </div>
+
+    <!-- Mobile Menu -->
+    <div id="mobile-menu" class="hidden md:hidden">
+      <div class="space-y-1 px-2 pb-3 pt-2 sm:px-3">
+        <a href="/" 
+           class="mobile-nav-link block px-3 py-2 rounded-md text-base font-medium transition-all duration-200 text-gray-300 hover:bg-cyan-500/10 hover:text-cyan-300">
+          Simulator
+        </a>
+        <a href="services.html" 
+           class="mobile-nav-link block px-3 py-2 rounded-md text-base font-medium transition-all duration-200 text-gray-300 hover:bg-cyan-500/10 hover:text-cyan-300">
+          Servicios
+        </a>
+        <a href="contact.html" 
+           class="mobile-nav-link block px-3 py-2 rounded-md text-base font-medium transition-all duration-200 text-gray-300 hover:bg-cyan-500/10 hover:text-cyan-300">
+          Contacto
+        </a>
+        <div class="px-3 py-2">
+          <a href="contact.html" 
+             class="block w-full rounded-md bg-gradient-to-r from-cyan-400 to-emerald-500 px-4 py-2 text-center text-sm font-bold text-gray-900 hover:from-cyan-300 hover:to-emerald-600 transition-all duration-200 font-mono uppercase tracking-wide">
+            Trabajemos Juntos
+          </a>
+        </div>
+      </div>
+    </div>
+  </nav>
+</header>
