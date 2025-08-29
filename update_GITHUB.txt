@@ -1,0 +1,14 @@
+# 1. Ver qué archivos cambiaron
+git status
+
+# 2. Agregar los cambios (ejemplo: solo un archivo)
+git add archivo_modificado.js
+
+#   o todos los cambios:
+git add .
+
+# 3. Guardar el cambio con un commit
+git commit -m "Descripción breve de lo que cambiaste"
+
+# 4. Subir los cambios a GitHub
+git push origin main
