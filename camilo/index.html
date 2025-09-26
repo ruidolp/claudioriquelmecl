@@ -65,20 +65,20 @@
         
         /* Modo cine - layout especial */
         .cinema-layout {
-            flex-direction: column !important;
+            flex-direction: row !important;
         }
         
         .cinema-layout #video-section {
-            width: 100% !important;
+            flex: 1;
             padding: 0 !important;
         }
         
         .cinema-layout #sidebar {
-            width: 100% !important;
-            height: auto !important;
-            max-height: 500px;
-            padding: 20px;
-            order: 2;
+            width: 400px !important;
+            height: 100vh !important;
+            max-height: none;
+            padding: 0;
+            position: relative;
         }
         
         /* Contenedor de video en modo cine */
@@ -94,9 +94,15 @@
             position: sticky;
             top: 0;
             z-index: 10;
-            margin: -20px -20px 0 -20px;
-            padding: 20px 20px 16px 20px;
+            padding: 20px;
             border-bottom: 1px solid #e5e5e5;
+        }
+        
+        /* Contenedor scrollable */
+        .sidebar-content {
+            padding: 0 20px 20px 20px;
+            height: calc(100vh - 80px);
+            overflow-y: auto;
         }
         
         /* Indicador de video actual */
@@ -271,16 +277,18 @@
         </div>
 
         <!-- Sidebar de videos -->
-        <div id="sidebar" class="w-96 youtube-sidebar p-4 sidebar overflow-y-auto h-screen">
+        <div id="sidebar" class="w-96 youtube-sidebar overflow-hidden h-screen">
             <div class="sidebar-header">
                 <h2 class="text-lg font-semibold text-gray-900">Más videos seguros</h2>
             </div>
             
-            <div id="videos-sidebar" class="space-y-3 mt-4">
-                <!-- Videos se cargarán aquí -->
-                <div class="skeleton h-24 rounded-lg"></div>
-                <div class="skeleton h-24 rounded-lg"></div>
-                <div class="skeleton h-24 rounded-lg"></div>
+            <div class="sidebar-content">
+                <div id="videos-sidebar" class="space-y-3">
+                    <!-- Videos se cargarán aquí -->
+                    <div class="skeleton h-24 rounded-lg"></div>
+                    <div class="skeleton h-24 rounded-lg"></div>
+                    <div class="skeleton h-24 rounded-lg"></div>
+                </div>
             </div>
         </div>
     </div>
