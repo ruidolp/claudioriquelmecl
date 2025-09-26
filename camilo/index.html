@@ -300,41 +300,35 @@
     <script src="https://www.youtube.com/iframe_api"></script>
     
     <script>
-        // Videos reales que me proporcionaste
-        const videoDatabase = [
-            {
-                id: "9HVqZxU8waI",
-                title: "Canciones Infantiles - Música Educativa",
-                channel: "Contenido Educativo",
-                views: "1.2M visualizaciones",
-                duration: "3:45"
-            },
-            {
-                id: "rdUacwdA3_E", 
-                title: "Videos Divertidos para Niños",
-                channel: "Entretenimiento Familiar",
-                views: "890K visualizaciones",
-                duration: "5:22"
-            },
-            {
-                id: "AG5HnHE__5Y",
-                title: "Aprendizaje y Diversión",
-                channel: "Educación Kids",
-                views: "2.1M visualizaciones", 
-                duration: "4:18"
-            },
-            {
-                id: "wuDW2jbMK4M",
-                title: "Contenido Seguro para Niños",
-                channel: "Familia Segura",
-                views: "756K visualizaciones",
-                duration: "6:33"
-            }
+        // URLs simples - solo agregar/quitar URLs aquí
+        const videoUrls = [
+            "https://www.youtube.com/watch?v=9HVqZxU8waI",
+            "https://youtu.be/rdUacwdA3_E", 
+            "https://www.youtube.com/watch?v=AG5HnHE__5Y",
+            "https://youtu.be/wuDW2jbMK4M"
         ];
 
         let currentVideoIndex = 0;
         let videos = [];
         let player = null;
+
+        // Función para extraer ID de cualquier formato de URL de YouTube
+        function extractVideoId(url) {
+            const regExp = /^.*((youtu.be\/)|(v\/)|(\/u\/\w\/)|(embed\/)|(watch\?))\??v?=?([^#&?]*).*/;
+            const match = url.match(regExp);
+            return (match && match[7].length === 11) ? match[7] : null;
+        }
+
+        // Función para convertir URLs a objetos simples
+        function processVideoUrls(urls) {
+            return urls.map((url, index) => ({
+                id: extractVideoId(url),
+                title: `Video Seguro ${index + 1}`,
+                channel: "KidsPlay",
+                views: `${Math.floor(Math.random() * 900 + 100)}K visualizaciones`,
+                duration: `${Math.floor(Math.random() * 8 + 2)}:${String(Math.floor(Math.random() * 60)).padStart(2, '0')}`
+            }));
+        }
 
         // Función para mezclar array aleatoriamente
         function shuffleArray(array) {
@@ -355,8 +349,11 @@
         // Función para cargar videos aleatoriamente
         function loadVideos() {
             try {
+                // Convertir URLs a objetos con metadata simple
+                const processedVideos = processVideoUrls(videoUrls);
+                
                 // Mezclar videos aleatoriamente cada vez que se carga la página
-                videos = shuffleArray(videoDatabase);
+                videos = shuffleArray(processedVideos);
                 
                 // Seleccionar video principal aleatorio
                 currentVideoIndex = 0;
