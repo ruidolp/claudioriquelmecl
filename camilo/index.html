@@ -65,21 +65,20 @@
         
         /* Modo cine - layout especial */
         .cinema-layout {
-            flex-direction: row !important;
+            flex-direction: column !important;
         }
         
         .cinema-layout #video-section {
-            flex: 1;
-            padding: 0 20px 0 0 !important;
+            width: 100% !important;
+            padding: 0 !important;
         }
         
         .cinema-layout #sidebar {
-            width: 400px !important;
-            height: 100vh !important;
-            max-height: none;
+            width: 100% !important;
+            height: auto !important;
+            max-height: 500px;
             padding: 20px;
-            position: sticky;
-            top: 0;
+            order: 2;
         }
         
         /* Contenedor de video en modo cine */
@@ -273,11 +272,11 @@
 
         <!-- Sidebar de videos -->
         <div id="sidebar" class="w-96 youtube-sidebar p-4 sidebar overflow-y-auto h-screen">
-            <div class="sticky top-0 youtube-sidebar pb-4 mb-4">
-                <h2 class="text-lg font-semibold mb-4 text-gray-900">Más videos seguros</h2>
+            <div class="sidebar-header">
+                <h2 class="text-lg font-semibold text-gray-900">Más videos seguros</h2>
             </div>
             
-            <div id="videos-sidebar" class="space-y-3">
+            <div id="videos-sidebar" class="space-y-3 mt-4">
                 <!-- Videos se cargarán aquí -->
                 <div class="skeleton h-24 rounded-lg"></div>
                 <div class="skeleton h-24 rounded-lg"></div>
