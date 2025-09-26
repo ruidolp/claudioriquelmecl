@@ -1,0 +1,183 @@
+import React, { useState, useEffect } from 'react';
+import { Play, Volume2, Settings, MoreHorizontal } from 'lucide-react';
+
+const VideoVisualizer = () => {
+  const [videos, setVideos] = useState([]);
+  const [currentVideo, setCurrentVideo] = useState(null);
+  const [suggestedVideos, setSuggestedVideos] = useState([]);
+
+  // Función para extraer video ID de URL de YouTube
+  const extractVideoId = (url) => {
+    const regExp = /^.*((youtu.be\/)|(v\/)|(\/u\/\w\/)|(embed\/)|(watch\?))\??v?=?([^#&?]*).*/;
+    const match = url.match(regExp);
+    return (match && match[7].length === 11) ? match[7] : null;
+  };
+
+  // Función para obtener thumbnail de YouTube
+  const getVideoThumbnail = (videoId) => {
+    return `https://img.youtube.com/vi/${videoId}/mqdefault.jpg`;
+  };
+
+  // Función para obtener título del video (simulado por ahora)
+  const getVideoTitle = async (videoId) => {
+    // Por ahora retornamos un título genérico
+    // En producción, podrías usar la API de YouTube para obtener el título real
+    return `Video ${videoId.substring(0, 8)}`;
+  };
+
+  // Cargar videos del archivo JSON
+  useEffect(() => {
+    const loadVideos = async () => {
+      try {
+        // Simulamos la carga desde videos.json
+        const mockVideos = [
+          "https://youtube.com/watch?v=dQw4w9WgXcQ",
+          "https://youtube.com/watch?v=9bZkp7q19f0",
+          "https://youtube.com/watch?v=L_jWHffIx5E",
+          "https://youtube.com/watch?v=fJ9rUzIMcZQ",
+          "https://youtube.com/watch?v=ZZ5LpwO-An4"
+        ];
+        
+        // En producción, descomenta esta línea:
+        // const response = await fetch('/videos.json');
+        // const videoUrls = await response.json();
+        
+        const videoData = await Promise.all(
+          mockVideos.map(async (url) => {
+            const videoId = extractVideoId(url);
+            const title = await getVideoTitle(videoId);
+            return {
+              id: videoId,
+              url,
+              title,
+              thumbnail: getVideoThumbnail(videoId)
+            };
+          })
+        );
+        
+        setVideos(videoData);
+        if (videoData.length > 0) {
+          setCurrentVideo(videoData[0]);
+          // Mezclar videos para sugerencias (excluyendo el actual)
+          const shuffled = videoData.slice(1).sort(() => Math.random() - 0.5);
+          setSuggestedVideos(shuffled);
+        }
+      } catch (error) {
+        console.error('Error cargando videos:', error);
+      }
+    };
+
+    loadVideos();
+  }, []);
+
+  const handleVideoSelect = (video) => {
+    setCurrentVideo(video);
+    // Actualizar sugerencias excluyendo el video actual
+    const otherVideos = videos.filter(v => v.id !== video.id);
+    const shuffled = otherVideos.sort(() => Math.random() - 0.5);
+    setSuggestedVideos(shuffled);
+  };
+
+  if (!currentVideo) {
+    return (
+      <div className="min-h-screen bg-gray-900 flex items-center justify-center">
+        <div className="text-white text-xl">Cargando videos...</div>
+      </div>
+    );
+  }
+
+  return (
+    <div className="min-h-screen bg-gray-900 text-white">
+      {/* Header */}
+      <header className="bg-gray-900 border-b border-gray-700 px-4 py-3">
+        <div className="flex items-center justify-between max-w-7xl mx-auto">
+          <div className="flex items-center space-x-4">
+            <div className="w-8 h-8 bg-red-600 rounded flex items-center justify-center">
+              <Play className="w-5 h-5 text-white" />
+            </div>
+            <span className="text-xl font-semibold">KidsPlay</span>
+          </div>
+          <div className="flex items-center space-x-4">
+            <Settings className="w-6 h-6 text-gray-300 hover:text-white cursor-pointer" />
+            <MoreHorizontal className="w-6 h-6 text-gray-300 hover:text-white cursor-pointer" />
+          </div>
+        </div>
+      </header>
+
+      {/* Main Content */}
+      <div className="max-w-7xl mx-auto px-4 py-6">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+          {/* Video Principal */}
+          <div className="lg:col-span-2">
+            <div className="bg-black rounded-lg overflow-hidden">
+              <div className="relative w-full" style={{ paddingBottom: '56.25%' }}>
+                <iframe
+                  className="absolute top-0 left-0 w-full h-full"
+                  src={`https://www.youtube.com/embed/${currentVideo.id}?autoplay=1&rel=0&modestbranding=1`}
+                  title={currentVideo.title}
+                  frameBorder="0"
+                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                  allowFullScreen
+                ></iframe>
+              </div>
+            </div>
+            
+            {/* Video Info */}
+            <div className="mt-4">
+              <h1 className="text-xl font-semibold text-white mb-2">
+                {currentVideo.title}
+              </h1>
+              <div className="flex items-center justify-between">
+                <div className="flex items-center space-x-4">
+                  <button className="flex items-center space-x-2 bg-gray-700 hover:bg-gray-600 px-4 py-2 rounded-full transition-colors">
+                    <Volume2 className="w-4 h-4" />
+                    <span className="text-sm">Audio</span>
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Sidebar con Videos Sugeridos */}
+          <div className="lg:col-span-1">
+            <h2 className="text-lg font-semibold mb-4">Más videos</h2>
+            <div className="space-y-3">
+              {suggestedVideos.map((video) => (
+                <div
+                  key={video.id}
+                  className="flex space-x-3 cursor-pointer hover:bg-gray-800 p-2 rounded-lg transition-colors"
+                  onClick={() => handleVideoSelect(video)}
+                >
+                  <div className="flex-shrink-0">
+                    <img
+                      src={video.thumbnail}
+                      alt={video.title}
+                      className="w-24 h-16 object-cover rounded"
+                    />
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <h3 className="text-sm font-medium text-white line-clamp-2 mb-1">
+                      {video.title}
+                    </h3>
+                    <p className="text-xs text-gray-400">
+                      Video para niños
+                    </p>
+                  </div>
+                </div>
+              ))}
+            </div>
+
+            {/* Botón para ver todos los videos */}
+            <div className="mt-6">
+              <button className="w-full bg-red-600 hover:bg-red-700 text-white py-2 px-4 rounded-lg transition-colors">
+                Ver todos los videos
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+export default VideoVisualizer;
