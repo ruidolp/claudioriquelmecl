@@ -1,183 +1,363 @@
-import React, { useState, useEffect } from 'react';
-import { Play, Volume2, Settings, MoreHorizontal } from 'lucide-react';
-
-const VideoVisualizer = () => {
-  const [videos, setVideos] = useState([]);
-  const [currentVideo, setCurrentVideo] = useState(null);
-  const [suggestedVideos, setSuggestedVideos] = useState([]);
-
-  // Función para extraer video ID de URL de YouTube
-  const extractVideoId = (url) => {
-    const regExp = /^.*((youtu.be\/)|(v\/)|(\/u\/\w\/)|(embed\/)|(watch\?))\??v?=?([^#&?]*).*/;
-    const match = url.match(regExp);
-    return (match && match[7].length === 11) ? match[7] : null;
-  };
-
-  // Función para obtener thumbnail de YouTube
-  const getVideoThumbnail = (videoId) => {
-    return `https://img.youtube.com/vi/${videoId}/mqdefault.jpg`;
-  };
-
-  // Función para obtener título del video (simulado por ahora)
-  const getVideoTitle = async (videoId) => {
-    // Por ahora retornamos un título genérico
-    // En producción, podrías usar la API de YouTube para obtener el título real
-    return `Video ${videoId.substring(0, 8)}`;
-  };
-
-  // Cargar videos del archivo JSON
-  useEffect(() => {
-    const loadVideos = async () => {
-      try {
-        // Simulamos la carga desde videos.json
-        const mockVideos = [
-          "https://youtube.com/watch?v=dQw4w9WgXcQ",
-          "https://youtube.com/watch?v=9bZkp7q19f0",
-          "https://youtube.com/watch?v=L_jWHffIx5E",
-          "https://youtube.com/watch?v=fJ9rUzIMcZQ",
-          "https://youtube.com/watch?v=ZZ5LpwO-An4"
-        ];
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>KidsPlay - Videos Seguros</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        /* Estilos adicionales para que sea más similar a YouTube */
+        .youtube-red { background-color: #FF0000; }
+        .youtube-dark { background-color: #0f0f0f; }
+        .youtube-sidebar { background-color: #0f0f0f; }
+        .youtube-header { background-color: #0f0f0f; border-bottom: 1px solid #ffffff1a; }
+        .video-thumbnail:hover { cursor: pointer; }
+        .video-thumbnail:hover img { opacity: 0.8; }
         
-        // En producción, descomenta esta línea:
-        // const response = await fetch('/videos.json');
-        // const videoUrls = await response.json();
-        
-        const videoData = await Promise.all(
-          mockVideos.map(async (url) => {
-            const videoId = extractVideoId(url);
-            const title = await getVideoTitle(videoId);
-            return {
-              id: videoId,
-              url,
-              title,
-              thumbnail: getVideoThumbnail(videoId)
-            };
-          })
-        );
-        
-        setVideos(videoData);
-        if (videoData.length > 0) {
-          setCurrentVideo(videoData[0]);
-          // Mezclar videos para sugerencias (excluyendo el actual)
-          const shuffled = videoData.slice(1).sort(() => Math.random() - 0.5);
-          setSuggestedVideos(shuffled);
+        /* Scrollbar personalizado para sidebar */
+        .sidebar::-webkit-scrollbar {
+            width: 8px;
         }
-      } catch (error) {
-        console.error('Error cargando videos:', error);
-      }
-    };
+        .sidebar::-webkit-scrollbar-track {
+            background: #0f0f0f;
+        }
+        .sidebar::-webkit-scrollbar-thumb {
+            background: #ffffff33;
+            border-radius: 4px;
+        }
+        .sidebar::-webkit-scrollbar-thumb:hover {
+            background: #ffffff4d;
+        }
 
-    loadVideos();
-  }, []);
-
-  const handleVideoSelect = (video) => {
-    setCurrentVideo(video);
-    // Actualizar sugerencias excluyendo el video actual
-    const otherVideos = videos.filter(v => v.id !== video.id);
-    const shuffled = otherVideos.sort(() => Math.random() - 0.5);
-    setSuggestedVideos(shuffled);
-  };
-
-  if (!currentVideo) {
-    return (
-      <div className="min-h-screen bg-gray-900 flex items-center justify-center">
-        <div className="text-white text-xl">Cargando videos...</div>
-      </div>
-    );
-  }
-
-  return (
-    <div className="min-h-screen bg-gray-900 text-white">
-      {/* Header */}
-      <header className="bg-gray-900 border-b border-gray-700 px-4 py-3">
-        <div className="flex items-center justify-between max-w-7xl mx-auto">
-          <div className="flex items-center space-x-4">
-            <div className="w-8 h-8 bg-red-600 rounded flex items-center justify-center">
-              <Play className="w-5 h-5 text-white" />
+        /* Loading skeleton */
+        .skeleton {
+            background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+            background-size: 200% 100%;
+            animation: loading 1.5s infinite;
+        }
+        @keyframes loading {
+            0% { background-position: 200% 0; }
+            100% { background-position: -200% 0; }
+        }
+    </style>
+</head>
+<body class="youtube-dark text-white min-h-screen">
+    <!-- Header -->
+    <header class="youtube-header sticky top-0 z-50 px-4 py-2">
+        <div class="flex items-center justify-between max-w-full">
+            <!-- Logo y menú -->
+            <div class="flex items-center space-x-4">
+                <button class="p-2 hover:bg-white hover:bg-opacity-10 rounded-full">
+                    <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
+                        <path d="M3 18h18v-2H3v2zm0-5h18v-2H3v2zm0-7v2h18V6H3z"/>
+                    </svg>
+                </button>
+                <div class="flex items-center space-x-2">
+                    <div class="w-8 h-8 youtube-red rounded flex items-center justify-center">
+                        <svg class="w-5 h-5 text-white" fill="currentColor" viewBox="0 0 24 24">
+                            <path d="M8 5v14l11-7z"/>
+                        </svg>
+                    </div>
+                    <span class="text-xl font-bold">KidsPlay</span>
+                </div>
             </div>
-            <span className="text-xl font-semibold">KidsPlay</span>
-          </div>
-          <div className="flex items-center space-x-4">
-            <Settings className="w-6 h-6 text-gray-300 hover:text-white cursor-pointer" />
-            <MoreHorizontal className="w-6 h-6 text-gray-300 hover:text-white cursor-pointer" />
-          </div>
-        </div>
-      </header>
 
-      {/* Main Content */}
-      <div className="max-w-7xl mx-auto px-4 py-6">
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-          {/* Video Principal */}
-          <div className="lg:col-span-2">
-            <div className="bg-black rounded-lg overflow-hidden">
-              <div className="relative w-full" style={{ paddingBottom: '56.25%' }}>
-                <iframe
-                  className="absolute top-0 left-0 w-full h-full"
-                  src={`https://www.youtube.com/embed/${currentVideo.id}?autoplay=1&rel=0&modestbranding=1`}
-                  title={currentVideo.title}
-                  frameBorder="0"
-                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                  allowFullScreen
-                ></iframe>
-              </div>
+            <!-- Barra de búsqueda -->
+            <div class="flex-1 max-w-2xl mx-8">
+                <div class="flex">
+                    <input 
+                        type="text" 
+                        placeholder="Buscar videos seguros..."
+                        class="flex-1 px-4 py-2 bg-black border border-gray-600 rounded-l-full text-white placeholder-gray-400 focus:border-blue-500 focus:outline-none"
+                        disabled
+                    >
+                    <button class="px-6 py-2 bg-gray-800 border border-l-0 border-gray-600 rounded-r-full hover:bg-gray-700">
+                        <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+                            <path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/>
+                        </svg>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Controles derecha -->
+            <div class="flex items-center space-x-4">
+                <button class="p-2 hover:bg-white hover:bg-opacity-10 rounded-full">
+                    <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
+                        <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
+                    </svg>
+                </button>
+                <div class="w-8 h-8 youtube-red rounded-full flex items-center justify-center text-sm font-bold">
+                    K
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Contenido principal -->
+    <div class="flex max-w-full">
+        <!-- Video principal y info -->
+        <div class="flex-1 p-6">
+            <!-- Video container -->
+            <div class="bg-black rounded-lg overflow-hidden mb-4">
+                <div class="relative w-full" style="padding-bottom: 56.25%;">
+                    <iframe 
+                        id="main-video"
+                        class="absolute top-0 left-0 w-full h-full"
+                        src=""
+                        title="Video principal"
+                        frameborder="0"
+                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                        allowfullscreen>
+                    </iframe>
+                </div>
+            </div>
+
+            <!-- Información del video -->
+            <div class="mb-6">
+                <h1 id="video-title" class="text-xl font-semibold mb-3 text-white">
+                    Cargando video...
+                </h1>
+                
+                <!-- Stats y controles -->
+                <div class="flex items-center justify-between mb-4">
+                    <div class="text-gray-400 text-sm">
+                        <span id="video-views">• Contenido seguro para niños</span>
+                    </div>
+                    <div class="flex items-center space-x-4">
+                        <button class="flex items-center space-x-2 px-4 py-2 bg-gray-800 hover:bg-gray-700 rounded-full">
+                            <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+                                <path d="M1 21h4V9H1v12zm22-11c0-1.1-.9-2-2-2h-6.31l.95-4.57.03-.32c0-.41-.17-.79-.44-1.06L14.17 1 7.59 7.59C7.22 7.95 7 8.45 7 9v10c0 1.1.9 2 2 2h9c.83 0 1.54-.5 1.84-1.22l3.02-7.05c.09-.23.14-.47.14-.73v-2z"/>
+                            </svg>
+                            <span>Me gusta</span>
+                        </button>
+                        <button class="flex items-center space-x-2 px-4 py-2 bg-gray-800 hover:bg-gray-700 rounded-full">
+                            <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+                                <path d="M15 6H3v2h12V6zm0 4H3v2h12v-2zM3 16h8v-2H3v2zM17 6v8.18c-.31-.11-.65-.18-1-.18-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3V8h3V6h-5z"/>
+                            </svg>
+                            <span>Guardar</span>
+                        </button>
+                        <button class="flex items-center space-x-2 px-4 py-2 bg-gray-800 hover:bg-gray-700 rounded-full">
+                            <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+                                <path d="M18 16.08c-.76 0-1.44.3-1.96.77L8.91 12.7c.05-.23.09-.46.09-.7s-.04-.47-.09-.7l7.05-4.11c.54.5 1.25.81 2.04.81 1.66 0 3-1.34 3-3s-1.34-3-3-3-3 1.34-3 3c0 .24.04.47.09.7L8.04 9.81C7.5 9.31 6.79 9 6 9c-1.66 0-3 1.34-3 3s1.34 3 3 3c.79 0 1.5-.31 2.04-.81l7.12 4.16c-.05.21-.08.43-.08.65 0 1.61 1.31 2.92 2.92 2.92s2.92-1.31 2.92-2.92-1.31-2.92-2.92-2.92z"/>
+                            </svg>
+                            <span>Compartir</span>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Canal info -->
+                <div class="flex items-center space-x-4 p-4 bg-gray-900 rounded-lg">
+                    <div class="w-12 h-12 youtube-red rounded-full flex items-center justify-center font-bold text-lg">
+                        K
+                    </div>
+                    <div class="flex-1">
+                        <h3 class="font-semibold">KidsPlay Oficial</h3>
+                        <p class="text-gray-400 text-sm">Videos seguros seleccionados por papás y mamás</p>
+                    </div>
+                    <button class="youtube-red px-6 py-2 rounded-full font-medium hover:bg-red-700 transition-colors">
+                        Suscribirse
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Sidebar de videos -->
+        <div class="w-96 p-4 sidebar overflow-y-auto h-screen">
+            <div class="sticky top-0 youtube-dark pb-4 mb-4">
+                <h2 class="text-lg font-semibold mb-4">Más videos seguros</h2>
             </div>
             
-            {/* Video Info */}
-            <div className="mt-4">
-              <h1 className="text-xl font-semibold text-white mb-2">
-                {currentVideo.title}
-              </h1>
-              <div className="flex items-center justify-between">
-                <div className="flex items-center space-x-4">
-                  <button className="flex items-center space-x-2 bg-gray-700 hover:bg-gray-600 px-4 py-2 rounded-full transition-colors">
-                    <Volume2 className="w-4 h-4" />
-                    <span className="text-sm">Audio</span>
-                  </button>
-                </div>
-              </div>
+            <div id="videos-sidebar" class="space-y-3">
+                <!-- Videos se cargarán aquí -->
+                <div class="skeleton h-24 rounded"></div>
+                <div class="skeleton h-24 rounded"></div>
+                <div class="skeleton h-24 rounded"></div>
             </div>
-          </div>
-
-          {/* Sidebar con Videos Sugeridos */}
-          <div className="lg:col-span-1">
-            <h2 className="text-lg font-semibold mb-4">Más videos</h2>
-            <div className="space-y-3">
-              {suggestedVideos.map((video) => (
-                <div
-                  key={video.id}
-                  className="flex space-x-3 cursor-pointer hover:bg-gray-800 p-2 rounded-lg transition-colors"
-                  onClick={() => handleVideoSelect(video)}
-                >
-                  <div className="flex-shrink-0">
-                    <img
-                      src={video.thumbnail}
-                      alt={video.title}
-                      className="w-24 h-16 object-cover rounded"
-                    />
-                  </div>
-                  <div className="flex-1 min-w-0">
-                    <h3 className="text-sm font-medium text-white line-clamp-2 mb-1">
-                      {video.title}
-                    </h3>
-                    <p className="text-xs text-gray-400">
-                      Video para niños
-                    </p>
-                  </div>
-                </div>
-              ))}
-            </div>
-
-            {/* Botón para ver todos los videos */}
-            <div className="mt-6">
-              <button className="w-full bg-red-600 hover:bg-red-700 text-white py-2 px-4 rounded-lg transition-colors">
-                Ver todos los videos
-              </button>
-            </div>
-          </div>
         </div>
-      </div>
     </div>
-  );
-};
 
-export default VideoVisualizer;
+    <script>
+        // Datos de ejemplo - en producción, esto vendría de videos.json
+        const mockVideos = [
+            {
+                id: "dQw4w9WgXcQ",
+                title: "Canciones para Niños - Aprender Colores",
+                channel: "Educativo Kids",
+                views: "2.3M visualizaciones",
+                duration: "3:24"
+            },
+            {
+                id: "9bZkp7q19f0",
+                title: "Cuentos Infantiles - La Tortuga y la Liebre",
+                channel: "Cuentos Mágicos",
+                views: "1.8M visualizaciones", 
+                duration: "5:12"
+            },
+            {
+                id: "L_jWHffIx5E",
+                title: "Experimentos Fáciles para Niños",
+                channel: "Ciencia Divertida",
+                views: "956K visualizaciones",
+                duration: "8:45"
+            },
+            {
+                id: "fJ9rUzIMcZQ",
+                title: "Aprende Números del 1 al 10",
+                channel: "Matemáticas Kids",
+                views: "3.2M visualizaciones",
+                duration: "4:18"
+            },
+            {
+                id: "ZZ5LpwO-An4",
+                title: "Animales de la Granja - Sonidos",
+                channel: "Mundo Animal",
+                views: "2.7M visualizaciones",
+                duration: "6:33"
+            }
+        ];
+
+        let currentVideoIndex = 0;
+        let videos = [];
+
+        // Función para cargar videos (en producción vendría de videos.json)
+        async function loadVideos() {
+            try {
+                // Simulamos carga desde archivo JSON
+                // const response = await fetch('videos.json');
+                // const videoUrls = await response.json();
+                
+                videos = mockVideos;
+                displayVideos();
+                loadMainVideo(0);
+            } catch (error) {
+                console.error('Error cargando videos:', error);
+                showError();
+            }
+        }
+
+        // Función para mostrar videos en sidebar
+        function displayVideos() {
+            const sidebar = document.getElementById('videos-sidebar');
+            sidebar.innerHTML = '';
+
+            videos.forEach((video, index) => {
+                if (index === currentVideoIndex) return; // No mostrar el video actual
+
+                const videoElement = createVideoElement(video, index);
+                sidebar.appendChild(videoElement);
+            });
+        }
+
+        // Crear elemento de video para sidebar
+        function createVideoElement(video, index) {
+            const div = document.createElement('div');
+            div.className = 'video-thumbnail flex space-x-3 p-2 hover:bg-gray-800 rounded-lg cursor-pointer transition-colors';
+            div.onclick = () => loadMainVideo(index);
+
+            div.innerHTML = `
+                <div class="flex-shrink-0 relative">
+                    <img 
+                        src="https://img.youtube.com/vi/${video.id}/mqdefault.jpg" 
+                        alt="${video.title}"
+                        class="w-32 h-20 object-cover rounded transition-opacity"
+                        onerror="this.src='data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTI4IiBoZWlnaHQ9IjgwIiB2aWV3Qm94PSIwIDAgMTI4IDgwIiBmaWxsPSJub25lIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciPgo8cmVjdCB3aWR0aD0iMTI4IiBoZWlnaHQ9IjgwIiBmaWxsPSIjMzMzIi8+CjxwYXRoIGQ9Ik01MCAzMkw3OCA0OEw1MCA2NFYzMloiIGZpbGw9IiNGRjAwMDAiLz4KPC9zdmc+'"
+                    >
+                    <span class="absolute bottom-1 right-1 bg-black bg-opacity-80 text-xs px-1 rounded text-white">
+                        ${video.duration}
+                    </span>
+                </div>
+                <div class="flex-1 min-w-0">
+                    <h3 class="text-sm font-medium text-white line-clamp-2 mb-1">
+                        ${video.title}
+                    </h3>
+                    <p class="text-xs text-gray-400 mb-1">${video.channel}</p>
+                    <p class="text-xs text-gray-400">${video.views}</p>
+                </div>
+            `;
+
+            return div;
+        }
+
+        // Cargar video principal
+        function loadMainVideo(index) {
+            currentVideoIndex = index;
+            const video = videos[index];
+            
+            // Actualizar iframe
+            const iframe = document.getElementById('main-video');
+            iframe.src = `https://www.youtube.com/embed/${video.id}?autoplay=1&rel=0&modestbranding=1`;
+            
+            // Actualizar título
+            document.getElementById('video-title').textContent = video.title;
+            document.getElementById('video-views').textContent = video.views + ' • Contenido seguro';
+            
+            // Actualizar sidebar
+            displayVideos();
+        }
+
+        // Mostrar error
+        function showError() {
+            const sidebar = document.getElementById('videos-sidebar');
+            sidebar.innerHTML = `
+                <div class="text-center p-4 text-gray-400">
+                    <p>Error cargando videos</p>
+                    <button onclick="loadVideos()" class="mt-2 px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700">
+                        Reintentar
+                    </button>
+                </div>
+            `;
+        }
+
+        // CSS para line-clamp (fallback)
+        const style = document.createElement('style');
+        style.textContent = `
+            .line-clamp-2 {
+                display: -webkit-box;
+                -webkit-line-clamp: 2;
+                -webkit-box-orient: vertical;
+                overflow: hidden;
+            }
+        `;
+        document.head.appendChild(style);
+
+        // Inicializar cuando se carga la página
+        document.addEventListener('DOMContentLoaded', loadVideos);
+
+        // Para desarrollo: función para cargar desde archivo JSON real
+        async function loadFromJSON() {
+            try {
+                const response = await fetch('videos.json');
+                const videoUrls = await response.json();
+                
+                // Convertir URLs a objetos con metadata
+                videos = videoUrls.map((url, index) => {
+                    const videoId = extractVideoId(url);
+                    return {
+                        id: videoId,
+                        title: `Video Seguro ${index + 1}`,
+                        channel: "Canal Familiar",
+                        views: "1K visualizaciones",
+                        duration: "0:00"
+                    };
+                });
+                
+                displayVideos();
+                loadMainVideo(0);
+            } catch (error) {
+                console.error('Error:', error);
+                loadVideos(); // Fallback a datos mock
+            }
+        }
+
+        // Extraer ID de video de URL de YouTube
+        function extractVideoId(url) {
+            const regExp = /^.*((youtu.be\/)|(v\/)|(\/u\/\w\/)|(embed\/)|(watch\?))\??v?=?([^#&?]*).*/;
+            const match = url.match(regExp);
+            return (match && match[7].length === 11) ? match[7] : null;
+        }
+
+        // Para usar con archivo JSON, descomenta esta línea:
+        // document.addEventListener('DOMContentLoaded', loadFromJSON);
+    </script>
+</body>
+</html>
