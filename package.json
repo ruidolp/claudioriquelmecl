@@ -1,0 +1,8 @@
+{
+  "name": "kidsplay",
+  "version": "1.0.0",
+  "type": "module",
+  "dependencies": {
+    "@vercel/edge-config": "^1.0.0"
+  }
+}
