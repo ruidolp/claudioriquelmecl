@@ -11,7 +11,7 @@ export default async function handler(req, res) {
     }
 
     const EDGE_CONFIG_ID = 'ecfg_lbbhs630xxkrlqefuteszrmtso5m';
-    const TOKEN = '32fe5313-9a5e-4f7e-9d33-85654ad9ba4b';
+    const TOKEN = 'Nmgmlzbwaj85DHnKnJPa3whZ';
     
     const response = await fetch(
       `https://api.vercel.com/v1/edge-config/${EDGE_CONFIG_ID}/items`,
