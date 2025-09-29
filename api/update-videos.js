@@ -26,7 +26,7 @@ export default async function handler(req, res) {
             {
               operation: 'upsert',
               key: 'videos',
-              value: { videos: videos }
+              value: videos
             }
           ]
         })
@@ -34,14 +34,16 @@ export default async function handler(req, res) {
     );
 
     if (!response.ok) {
-      throw new Error(`Error ${response.status}`);
+      const errorText = await response.text();
+      throw new Error(`Vercel API error: ${response.status} - ${errorText}`);
     }
 
     return res.status(200).json({ success: true });
     
   } catch (error) {
+    console.error('Error:', error);
     return res.status(500).json({ 
-      error: 'Error al actualizar Edge Config',
+      error: 'Error al actualizar',
       message: error.message 
     });
   }
