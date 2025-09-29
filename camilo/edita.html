@@ -249,7 +249,7 @@
             }
             
             const data = await response.json();
-            videos = data.videos || [];
+videos = Array.isArray(data) ? data : (data.videos || []);
             
             console.log('Videos cargados:', videos.length);
             
