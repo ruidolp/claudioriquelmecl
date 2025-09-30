@@ -218,8 +218,8 @@
         }
 
         // Cargar videos desde API
-        async function loadVideos() {
-            if (isLoading) return;
+        async function loadVideos(force = false) {
+            if (isLoading && !force) return;
             
             setLoading(true);
             setSyncStatus('Cargando...', 'text-yellow-600');
@@ -315,7 +315,8 @@
                 return;
             }
             
-            setLoading(true);
+            // No usar el overlay de carga aquí para permitir que loadVideos lo use
+            setSyncStatus('Agregando...', 'text-yellow-600');
             
             try {
                 const response = await fetch('/api/add-video', {
@@ -336,13 +337,14 @@
                 urlInput.value = '';
                 
                 showNotification('Video agregado correctamente', 'success');
-                await loadVideos();
+                
+                // Forzar recarga incluso si isLoading es true
+                await loadVideos(true);
                 
             } catch (error) {
                 console.error('Error:', error);
                 showNotification('Error: ' + error.message, 'error');
-            } finally {
-                setLoading(false);
+                setSyncStatus('Error', 'text-red-600');
             }
         }
 
@@ -359,7 +361,7 @@
                 return;
             }
             
-            setLoading(true);
+            setSyncStatus('Eliminando...', 'text-yellow-600');
             
             try {
                 const response = await fetch(`/api/delete-video?videoId=${encodeURIComponent(videoId)}`, {
@@ -373,13 +375,14 @@
                 }
                 
                 showNotification('Video eliminado correctamente', 'success');
-                await loadVideos();
+                
+                // Forzar recarga
+                await loadVideos(true);
                 
             } catch (error) {
                 console.error('Error:', error);
                 showNotification('Error: ' + error.message, 'error');
-            } finally {
-                setLoading(false);
+                setSyncStatus('Error', 'text-red-600');
             }
         }
 
@@ -418,7 +421,7 @@
                 <div class="video-thumbnail">
                     <img 
                         src="https://img.youtube.com/vi/${videoId}/maxresdefault.jpg" 
-                        alt="${video.nombre}"
+                        alt="${escapeHtml(video.nombre)}"
                         onerror="this.src='https://img.youtube.com/vi/${videoId}/hqdefault.jpg'"
                     >
                     <div class="play-overlay">
