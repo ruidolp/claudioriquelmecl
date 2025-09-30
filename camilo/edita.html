@@ -373,6 +373,30 @@ async function removeVideo(videoId) {
     }
 }
 
+// Mostrar videos en la interfaz
+function displayVideos() {
+    const container = document.getElementById('videos-container');
+    container.innerHTML = '';
+    
+    if (videos.length === 0) {
+        container.innerHTML = `
+            <div class="empty-state col-span-full">
+                <svg class="w-16 h-16 mx-auto mb-4 text-gray-300" fill="currentColor" viewBox="0 0 24 24">
+                    <path d="M8 5v14l11-7z"/>
+                </svg>
+                <p class="text-lg font-medium">No hay videos</p>
+                <p class="text-sm">Agrega tu primer video usando el formulario de arriba</p>
+            </div>
+        `;
+        return;
+    }
+    
+    videos.forEach((video, index) => {
+        const videoElement = createVideoCard(video, index);
+        container.appendChild(videoElement);
+    });
+}
+
     // Crear tarjeta de video
     function createVideoCard(video, index) {
         const videoId = extractVideoId(video.url);
