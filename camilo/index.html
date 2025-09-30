@@ -324,9 +324,10 @@
         let searchQuery = '';
 
         // Variables para tracking de visualización
-        let currentSessionId = null;
-        let sessionStartTime = null;
-        let isTracking = false;
+let currentSessionId = null;
+let playStartTime = null;  // Timestamp cuando empezó a reproducir
+let accumulatedSeconds = 0; // Segundos acumulados en esta sesión
+let isTracking = false;
 
         // Función para extraer ID de YouTube
         function extractVideoId(url) {
@@ -337,81 +338,106 @@
 
         // ===== FUNCIONES DE TRACKING =====
 
-        // Iniciar sesión de visualización
-        async function startWatchSession(videoId, videoName) {
-            if (isTracking) {
-                console.log('Ya hay una sesión activa');
-                return;
-            }
+// Iniciar sesión de visualización
+async function startWatchSession(videoId, videoName) {
+    try {
+        console.log('Iniciando sesión:', videoName);
+        
+        const response = await fetch('/api/log-watch', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                action: 'start',
+                videoId: videoId,
+                videoName: videoName
+            })
+        });
 
-            try {
-                console.log('Iniciando sesión:', videoName);
-                
-                const response = await fetch('/api/log-watch', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify({
-                        action: 'start',
-                        videoId: videoId,
-                        videoName: videoName
-                    })
-                });
+        const data = await response.json();
+        
+        if (data.success) {
+            currentSessionId = data.sessionId;
+            playStartTime = Date.now(); // Timestamp real de cuando empezó
+            accumulatedSeconds = 0;
+            isTracking = true;
+            console.log('Sesión iniciada, ID:', currentSessionId);
+        }
+    } catch (error) {
+        console.error('Error iniciando sesión:', error);
+    }
+}
 
-                const data = await response.json();
-                
-                if (data.success) {
-                    currentSessionId = data.sessionId;
-                    sessionStartTime = Date.now();
-                    isTracking = true;
-                    console.log('Sesión iniciada, ID:', currentSessionId);
-                }
-            } catch (error) {
-                console.error('Error iniciando sesión:', error);
-            }
+// Pausar temporalmente (para acumular tiempo sin cerrar sesión)
+function pauseTracking() {
+    if (isTracking && playStartTime) {
+        // Calcular tiempo transcurrido desde el último play
+        const now = Date.now();
+        const elapsedSeconds = Math.floor((now - playStartTime) / 1000);
+        accumulatedSeconds += elapsedSeconds;
+        
+        console.log('Pausado. Segundos en este intervalo:', elapsedSeconds, 'Total acumulado:', accumulatedSeconds);
+        
+        playStartTime = null; // Resetear para próximo play
+    }
+}
+
+// Reanudar tracking
+function resumeTracking() {
+    if (isTracking && !playStartTime) {
+        playStartTime = Date.now();
+        console.log('Reanudado tracking');
+    }
+}
+
+
+// Finalizar sesión de visualización
+async function endWatchSession(completed = false) {
+    if (!isTracking || !currentSessionId) {
+        return;
+    }
+
+    // Si estaba reproduciendo, acumular tiempo final
+    if (playStartTime) {
+        const now = Date.now();
+        const elapsedSeconds = Math.floor((now - playStartTime) / 1000);
+        accumulatedSeconds += elapsedSeconds;
+    }
+
+    try {
+        console.log('Finalizando sesión:', currentSessionId, 'Total segundos:', accumulatedSeconds);
+
+        const response = await fetch('/api/log-watch', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                action: 'end',
+                sessionId: currentSessionId,
+                seconds: accumulatedSeconds, // Tiempo real acumulado
+                completed: completed
+            })
+        });
+
+        const data = await response.json();
+        
+        if (data.success) {
+            console.log('Sesión finalizada correctamente');
         }
 
-        // Finalizar sesión de visualización
-        async function endWatchSession(completed = false) {
-            if (!isTracking || !currentSessionId) {
-                return;
-            }
+        // Reset variables
+        currentSessionId = null;
+        playStartTime = null;
+        accumulatedSeconds = 0;
+        isTracking = false;
 
-            try {
-                // Obtener tiempo real del reproductor
-                const currentTime = player ? Math.floor(player.getCurrentTime()) : 0;
-                
-                console.log('Finalizando sesión:', currentSessionId, 'Segundos:', currentTime);
+    } catch (error) {
+        console.error('Error finalizando sesión:', error);
+    }
+}
 
-                const response = await fetch('/api/log-watch', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify({
-                        action: 'end',
-                        sessionId: currentSessionId,
-                        seconds: currentTime,
-                        completed: completed
-                    })
-                });
-
-                const data = await response.json();
-                
-                if (data.success) {
-                    console.log('Sesión finalizada correctamente');
-                }
-
-                // Reset variables
-                currentSessionId = null;
-                sessionStartTime = null;
-                isTracking = false;
-
-            } catch (error) {
-                console.error('Error finalizando sesión:', error);
-            }
-        }
 
         // ===== FIN FUNCIONES DE TRACKING =====
 
@@ -551,32 +577,44 @@
         }
 
         // Detectar cambios de estado del video - MODIFICADO PARA TRACKING
-        function onPlayerStateChange(event) {
-            console.log('Estado del video:', event.data);
-            
-            const video = displayedVideos[currentVideoIndex];
-            
-            // PLAYING (1) - Video comenzó o reanudó
-            if (event.data === YT.PlayerState.PLAYING) {
-                if (!isTracking) {
-                    startWatchSession(video.id, video.nombre);
-                }
-            }
-            
-            // PAUSED (2) - Video pausado
-            if (event.data === YT.PlayerState.PAUSED) {
-                endWatchSession(false);
-            }
-            
-            // ENDED (0) - Video terminado
-            if (event.data === YT.PlayerState.ENDED) {
-                endWatchSession(true);
-                
-                setTimeout(() => {
-                    playNextVideo();
-                }, 1000);
-            }
+function onPlayerStateChange(event) {
+    console.log('Estado del video:', event.data);
+    
+    const video = displayedVideos[currentVideoIndex];
+    
+    // PLAYING (1) - Video comenzó o reanudó
+    if (event.data === YT.PlayerState.PLAYING) {
+        if (!isTracking) {
+            // Nueva sesión
+            startWatchSession(video.id, video.nombre);
+        } else {
+            // Reanudando después de pausa
+            resumeTracking();
         }
+    }
+    
+    // PAUSED (2) - Video pausado
+    if (event.data === YT.PlayerState.PAUSED) {
+        pauseTracking(); // Solo pausar, no cerrar sesión
+    }
+    
+    // BUFFERING (3) - Pausar tracking mientras carga
+    if (event.data === YT.PlayerState.BUFFERING) {
+        if (playStartTime) {
+            pauseTracking();
+        }
+    }
+    
+    // ENDED (0) - Video terminado
+    if (event.data === YT.PlayerState.ENDED) {
+        endWatchSession(true);
+        
+        setTimeout(() => {
+            playNextVideo();
+        }, 1000);
+    }
+}
+
 
         function playNextVideo() {
             if (displayedVideos.length === 0) return;
@@ -743,19 +781,26 @@
         }
 
         // BEFOREUNLOAD - Guardar sesión si cierra la pestaña
-        window.addEventListener('beforeunload', function(e) {
-            if (isTracking && currentSessionId) {
-                // Usar sendBeacon para garantizar que se envíe antes de cerrar
-                const data = JSON.stringify({
-                    action: 'end',
-                    sessionId: currentSessionId,
-                    seconds: player ? Math.floor(player.getCurrentTime()) : 0,
-                    completed: false
-                });
-                
-                navigator.sendBeacon('/api/log-watch', new Blob([data], { type: 'application/json' }));
-            }
+window.addEventListener('beforeunload', function(e) {
+    if (isTracking && currentSessionId) {
+        // Calcular tiempo final antes de cerrar
+        let finalSeconds = accumulatedSeconds;
+        if (playStartTime) {
+            const now = Date.now();
+            const elapsedSeconds = Math.floor((now - playStartTime) / 1000);
+            finalSeconds += elapsedSeconds;
+        }
+        
+        const data = JSON.stringify({
+            action: 'end',
+            sessionId: currentSessionId,
+            seconds: finalSeconds,
+            completed: false
         });
+        
+        navigator.sendBeacon('/api/log-watch', new Blob([data], { type: 'application/json' }));
+    }
+});
 
         // Event listeners
         document.addEventListener('DOMContentLoaded', function() {
