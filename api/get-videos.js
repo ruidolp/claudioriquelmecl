@@ -1,41 +1,26 @@
-import { get } from '@vercel/edge-config';
+import { sql } from '@vercel/postgres';
 
-export default async function handler(req) {
+export default async function handler(req, res) {
   try {
-    const data = await get('videos');
+    const { rows } = await sql`
+      SELECT video_id, nombre, url 
+      FROM videos 
+      ORDER BY created_at DESC
+    `;
     
-    if (!data) {
-      return new Response(
-        JSON.stringify({ videos: [] }),
-        { 
-          status: 200,
-          headers: { 'Content-Type': 'application/json' }
-        }
-      );
-    }
+    // Transformar a formato que espera el frontend
+    const videos = rows.map(row => ({
+      nombre: row.nombre,
+      url: row.url
+    }));
     
-    return new Response(
-      JSON.stringify(data),
-      { 
-        status: 200,
-        headers: { 'Content-Type': 'application/json' }
-      }
-    );
+    return res.status(200).json(videos);
     
   } catch (error) {
-    return new Response(
-      JSON.stringify({ 
-        error: 'Error al leer Edge Config',
-        message: error.message 
-      }),
-      { 
-        status: 500,
-        headers: { 'Content-Type': 'application/json' }
-      }
-    );
+    console.error('Error:', error);
+    return res.status(500).json({ 
+      error: 'Error al leer videos',
+      message: error.message 
+    });
   }
 }
-
-export const config = {
-  runtime: 'edge',
-};
