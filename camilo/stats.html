@@ -1,0 +1,388 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>KidsPlay - Estadísticas</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        .stat-card {
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+        .stat-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 15px -3px rgba(0, 0, 0, 0.1);
+        }
+        .gradient-blue {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+        .gradient-green {
+            background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
+        }
+        .gradient-orange {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+        }
+        .loading-spinner {
+            border: 3px solid #f3f3f3;
+            border-top: 3px solid #667eea;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        .skeleton {
+            background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+            background-size: 200% 100%;
+            animation: loading 1.5s infinite;
+        }
+        @keyframes loading {
+            0% { background-position: 200% 0; }
+            100% { background-position: -200% 0; }
+        }
+    </style>
+</head>
+<body class="bg-gray-50 min-h-screen">
+    <!-- Header -->
+    <header class="bg-white shadow-sm border-b sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-6 py-4">
+            <div class="flex items-center justify-between">
+                <div class="flex items-center space-x-4">
+                    <div class="w-10 h-10 bg-red-600 rounded-lg flex items-center justify-center">
+                        <svg class="w-6 h-6 text-white" fill="currentColor" viewBox="0 0 24 24">
+                            <path d="M8 5v14l11-7z"/>
+                        </svg>
+                    </div>
+                    <div>
+                        <h1 class="text-2xl font-bold text-gray-900">KidsPlay Estadísticas</h1>
+                        <p class="text-gray-600 text-sm">Análisis de visualización</p>
+                    </div>
+                </div>
+                <div class="flex items-center space-x-4">
+                    <button onclick="location.reload()" class="px-4 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition-colors">
+                        <svg class="w-4 h-4 inline mr-2" fill="currentColor" viewBox="0 0 24 24">
+                            <path d="M17.65 6.35C16.2 4.9 14.21 4 12 4c-4.42 0-7.99 3.58-7.99 8s3.57 8 7.99 8c3.73 0 6.84-2.55 7.73-6h-2.08c-.82 2.33-3.04 4-5.65 4-3.31 0-6-2.69-6-6s2.69-6 6-6c1.66 0 3.14.69 4.22 1.78L13 11h7V4l-2.35 2.35z"/>
+                        </svg>
+                        Actualizar
+                    </button>
+                    <a href="/" class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors">
+                        Volver al Visor
+                    </a>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Contenido principal -->
+    <div class="max-w-7xl mx-auto px-6 py-8">
+        <!-- Loading State -->
+        <div id="loading-state" class="flex items-center justify-center py-20">
+            <div class="text-center">
+                <div class="loading-spinner mx-auto mb-4"></div>
+                <p class="text-gray-600">Cargando estadísticas...</p>
+            </div>
+        </div>
+
+        <!-- Main Content -->
+        <div id="stats-content" class="hidden">
+            <!-- Resumen Rápido -->
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+                <!-- Hoy -->
+                <div class="stat-card gradient-blue text-white p-6 rounded-xl shadow-sm">
+                    <div class="flex items-center justify-between mb-4">
+                        <h3 class="text-white/80 text-sm font-medium uppercase">Hoy</h3>
+                        <svg class="w-8 h-8 text-white/60" fill="currentColor" viewBox="0 0 24 24">
+                            <path d="M11.99 2C6.47 2 2 6.48 2 12s4.47 10 9.99 10C17.52 22 22 17.52 22 12S17.52 2 11.99 2zM12 20c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8z"/>
+                            <path d="m12.5 7-1 0v6l5.25 3.15.75-1.23-4.5-2.67z"/>
+                        </svg>
+                    </div>
+                    <p id="today-minutes" class="text-4xl font-bold mb-1">-</p>
+                    <p class="text-white/80 text-sm">minutos vistos</p>
+                </div>
+
+                <!-- Esta Semana -->
+                <div class="stat-card gradient-green text-white p-6 rounded-xl shadow-sm">
+                    <div class="flex items-center justify-between mb-4">
+                        <h3 class="text-white/80 text-sm font-medium uppercase">Esta Semana</h3>
+                        <svg class="w-8 h-8 text-white/60" fill="currentColor" viewBox="0 0 24 24">
+                            <path d="M19 3h-1V1h-2v2H8V1H6v2H5c-1.11 0-1.99.9-1.99 2L3 19c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm0 16H5V8h14v11z"/>
+                        </svg>
+                    </div>
+                    <p id="week-minutes" class="text-4xl font-bold mb-1">-</p>
+                    <p class="text-white/80 text-sm">minutos (últimos 7 días)</p>
+                </div>
+
+                <!-- Este Mes -->
+                <div class="stat-card gradient-orange text-white p-6 rounded-xl shadow-sm">
+                    <div class="flex items-center justify-between mb-4">
+                        <h3 class="text-white/80 text-sm font-medium uppercase">Este Mes</h3>
+                        <svg class="w-8 h-8 text-white/60" fill="currentColor" viewBox="0 0 24 24">
+                            <path d="M9 11H7v2h2v-2zm4 0h-2v2h2v-2zm4 0h-2v2h2v-2zm2-7h-1V2h-2v2H8V2H6v2H5c-1.11 0-1.99.9-1.99 2L3 20c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 16H5V9h14v11z"/>
+                        </svg>
+                    </div>
+                    <p id="month-minutes" class="text-4xl font-bold mb-1">-</p>
+                    <p class="text-white/80 text-sm">minutos (últimos 30 días)</p>
+                </div>
+            </div>
+
+            <!-- Gráfico de Tendencia -->
+            <div class="bg-white rounded-xl shadow-sm border p-6 mb-8">
+                <h2 class="text-xl font-semibold text-gray-900 mb-4">Minutos por Día (Últimos 30 días)</h2>
+                <div class="h-80">
+                    <canvas id="dailyChart"></canvas>
+                </div>
+            </div>
+
+            <!-- Videos más vistos -->
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
+                <!-- Por cantidad de reproducciones -->
+                <div class="bg-white rounded-xl shadow-sm border p-6">
+                    <h2 class="text-xl font-semibold text-gray-900 mb-4">
+                        🏆 Más Reproducidos
+                    </h2>
+                    <div id="top-by-count" class="space-y-3">
+                        <!-- Se llenará con JS -->
+                    </div>
+                </div>
+
+                <!-- Por tiempo total -->
+                <div class="bg-white rounded-xl shadow-sm border p-6">
+                    <h2 class="text-xl font-semibold text-gray-900 mb-4">
+                        ⏱️ Más Tiempo Visto
+                    </h2>
+                    <div id="top-by-time" class="space-y-3">
+                        <!-- Se llenará con JS -->
+                    </div>
+                </div>
+            </div>
+
+            <!-- Sesiones de hoy -->
+            <div class="bg-white rounded-xl shadow-sm border p-6">
+                <h2 class="text-xl font-semibold text-gray-900 mb-4">
+                    📋 Sesiones de Hoy
+                </h2>
+                <div id="today-sessions" class="space-y-2">
+                    <!-- Se llenará con JS -->
+                </div>
+            </div>
+        </div>
+
+        <!-- Error State -->
+        <div id="error-state" class="hidden text-center py-20">
+            <svg class="w-16 h-16 text-red-500 mx-auto mb-4" fill="currentColor" viewBox="0 0 24 24">
+                <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z"/>
+            </svg>
+            <h3 class="text-xl font-semibold text-gray-900 mb-2">Error al cargar estadísticas</h3>
+            <p class="text-gray-600 mb-4">No se pudieron obtener los datos</p>
+            <button onclick="loadStats()" class="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700">
+                Reintentar
+            </button>
+        </div>
+    </div>
+
+    <script>
+        let dailyChart = null;
+
+        // Cargar estadísticas
+        async function loadStats() {
+            const loadingState = document.getElementById('loading-state');
+            const statsContent = document.getElementById('stats-content');
+            const errorState = document.getElementById('error-state');
+
+            loadingState.classList.remove('hidden');
+            statsContent.classList.add('hidden');
+            errorState.classList.add('hidden');
+
+            try {
+                const response = await fetch('/api/get-stats');
+                
+                if (!response.ok) {
+                    throw new Error(`Error ${response.status}`);
+                }
+
+                const data = await response.json();
+                
+                if (data.success) {
+                    displayStats(data.stats);
+                    loadingState.classList.add('hidden');
+                    statsContent.classList.remove('hidden');
+                } else {
+                    throw new Error('Error en la respuesta');
+                }
+
+            } catch (error) {
+                console.error('Error cargando stats:', error);
+                loadingState.classList.add('hidden');
+                errorState.classList.remove('hidden');
+            }
+        }
+
+        // Mostrar estadísticas
+        function displayStats(stats) {
+            // Resumen
+            document.getElementById('today-minutes').textContent = stats.today.minutes;
+            document.getElementById('week-minutes').textContent = stats.week.minutes;
+            document.getElementById('month-minutes').textContent = stats.month.minutes;
+
+            // Gráfico diario
+            renderDailyChart(stats.dailyStats);
+
+            // Top videos por cantidad
+            renderTopVideos('top-by-count', stats.topByCount, 'reproducciones');
+
+            // Top videos por tiempo
+            renderTopVideos('top-by-time', stats.topByTime, 'tiempo');
+
+            // Sesiones de hoy
+            renderTodaySessions(stats.todaySessions);
+        }
+
+        // Renderizar gráfico de tendencia diaria
+        function renderDailyChart(dailyStats) {
+            const ctx = document.getElementById('dailyChart').getContext('2d');
+
+            // Destruir gráfico anterior si existe
+            if (dailyChart) {
+                dailyChart.destroy();
+            }
+
+            const labels = dailyStats.map(d => {
+                const date = new Date(d.watch_date);
+                return date.toLocaleDateString('es-ES', { day: '2-digit', month: 'short' });
+            });
+
+            const data = dailyStats.map(d => Math.round(d.total_seconds / 60));
+
+            dailyChart = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: 'Minutos',
+                        data: data,
+                        backgroundColor: 'rgba(102, 126, 234, 0.8)',
+                        borderColor: 'rgba(102, 126, 234, 1)',
+                        borderWidth: 1,
+                        borderRadius: 6
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            display: false
+                        },
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    return context.parsed.y + ' minutos';
+                                }
+                            }
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            ticks: {
+                                callback: function(value) {
+                                    return value + ' min';
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
+        // Renderizar top videos
+        function renderTopVideos(containerId, videos, type) {
+            const container = document.getElementById(containerId);
+            container.innerHTML = '';
+
+            if (videos.length === 0) {
+                container.innerHTML = `
+                    <p class="text-gray-500 text-center py-8">No hay datos aún</p>
+                `;
+                return;
+            }
+
+            videos.forEach((video, index) => {
+                const div = document.createElement('div');
+                div.className = 'flex items-center justify-between p-3 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors';
+
+                const medal = index === 0 ? '🥇' : index === 1 ? '🥈' : index === 2 ? '🥉' : `${index + 1}.`;
+                
+                let statText = '';
+                if (type === 'reproducciones') {
+                    statText = `${video.reproducciones} reproducciones`;
+                } else {
+                    const minutes = Math.round(video.total_seconds / 60);
+                    statText = `${minutes} min`;
+                }
+
+                div.innerHTML = `
+                    <div class="flex items-center space-x-3 flex-1 min-w-0">
+                        <span class="text-lg font-semibold flex-shrink-0">${medal}</span>
+                        <div class="min-w-0 flex-1">
+                            <p class="font-medium text-gray-900 truncate">${video.video_nombre}</p>
+                            <p class="text-sm text-gray-600">${statText}</p>
+                        </div>
+                    </div>
+                `;
+
+                container.appendChild(div);
+            });
+        }
+
+        // Renderizar sesiones de hoy
+        function renderTodaySessions(sessions) {
+            const container = document.getElementById('today-sessions');
+            container.innerHTML = '';
+
+            if (sessions.length === 0) {
+                container.innerHTML = `
+                    <p class="text-gray-500 text-center py-8">No hay sesiones registradas hoy</p>
+                `;
+                return;
+            }
+
+            sessions.forEach(session => {
+                const div = document.createElement('div');
+                div.className = 'flex items-center justify-between p-4 border-b last:border-b-0 hover:bg-gray-50 transition-colors';
+
+                const startTime = new Date(session.started_at).toLocaleTimeString('es-ES', { 
+                    hour: '2-digit', 
+                    minute: '2-digit' 
+                });
+                
+                const minutes = Math.round(session.seconds_watched / 60);
+                const completedBadge = session.completed 
+                    ? '<span class="text-xs bg-green-100 text-green-700 px-2 py-1 rounded-full">Completado</span>'
+                    : '<span class="text-xs bg-gray-100 text-gray-700 px-2 py-1 rounded-full">Incompleto</span>';
+
+                div.innerHTML = `
+                    <div class="flex-1 min-w-0">
+                        <p class="font-medium text-gray-900 truncate">${session.video_nombre}</p>
+                        <p class="text-sm text-gray-600">${startTime} • ${minutes} minutos</p>
+                    </div>
+                    <div class="ml-4">
+                        ${completedBadge}
+                    </div>
+                `;
+
+                container.appendChild(div);
+            });
+        }
+
+        // Cargar stats al iniciar
+        document.addEventListener('DOMContentLoaded', function() {
+            loadStats();
+        });
+    </script>
+</body>
+</html>
