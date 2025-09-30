@@ -218,39 +218,40 @@
     }
 
     // Cargar videos desde API
-    async function loadVideos() {
-        if (isLoading) return;
+// Cargar videos desde API
+async function loadVideos() {
+    if (isLoading) return;
+    
+    setLoading(true);
+    setSyncStatus('Cargando...', 'text-yellow-600');
+    
+    try {
+        console.log('Cargando videos desde API...');
         
-        setLoading(true);
-        setSyncStatus('Cargando...', 'text-yellow-600');
+        const response = await fetch('/api/get-videos');
         
-        try {
-            console.log('Cargando videos desde API...');
-            
-            const response = await fetch('/api/get-videos');
-            
-            if (!response.ok) {
-                throw new Error(`Error ${response.status}`);
-            }
-            
-            const data = await response.json();
-videos = Array.isArray(data) ? data : (data.videos || []);
-            
-            console.log('Videos cargados:', videos.length);
-            
-            displayVideos();
-            updateStats();
-            setSyncStatus('Sincronizado', 'text-green-600');
-            showNotification('Videos cargados correctamente', 'success');
-            
-        } catch (error) {
-            console.error('Error cargando videos:', error);
-            setSyncStatus('Error', 'text-red-600');
-            showNotification('Error al cargar videos: ' + error.message, 'error');
-        } finally {
-            setLoading(false);
+        if (!response.ok) {
+            throw new Error(`Error ${response.status}`);
         }
+        
+        const data = await response.json();
+        videos = Array.isArray(data) ? data : (data.videos || []);
+        
+        console.log('Videos cargados:', videos.length);
+        
+        displayVideos();
+        updateStats();
+        setSyncStatus('Sincronizado', 'text-green-600');
+        showNotification('Videos cargados correctamente', 'success');
+        
+    } catch (error) {
+        console.error('Error cargando videos:', error);
+        setSyncStatus('Error', 'text-red-600');
+        showNotification('Error al cargar videos: ' + error.message, 'error');
+    } finally {
+        setLoading(false);
     }
+}
 
     // Guardar videos en API
     async function saveVideos() {
