@@ -318,19 +318,104 @@
     
     <script>
         let currentVideoIndex = 0;
-        let allVideos = [];  // Todos los videos desde el API
-        let displayedVideos = [];  // Videos filtrados actualmente mostrados
+        let allVideos = [];
+        let displayedVideos = [];
         let player = null;
         let searchQuery = '';
 
-        // Función para extraer ID de cualquier formato de URL de YouTube
+        // Variables para tracking de visualización
+        let currentSessionId = null;
+        let sessionStartTime = null;
+        let isTracking = false;
+
+        // Función para extraer ID de YouTube
         function extractVideoId(url) {
             const regExp = /^.*((youtu.be\/)|(v\/)|(\/u\/\w\/)|(embed\/)|(watch\?))\??v?=?([^#&?]*).*/;
             const match = url.match(regExp);
             return (match && match[7].length === 11) ? match[7] : null;
         }
 
-        // Cargar videos desde el API
+        // ===== FUNCIONES DE TRACKING =====
+
+        // Iniciar sesión de visualización
+        async function startWatchSession(videoId, videoName) {
+            if (isTracking) {
+                console.log('Ya hay una sesión activa');
+                return;
+            }
+
+            try {
+                console.log('Iniciando sesión:', videoName);
+                
+                const response = await fetch('/api/log-watch', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        action: 'start',
+                        videoId: videoId,
+                        videoName: videoName
+                    })
+                });
+
+                const data = await response.json();
+                
+                if (data.success) {
+                    currentSessionId = data.sessionId;
+                    sessionStartTime = Date.now();
+                    isTracking = true;
+                    console.log('Sesión iniciada, ID:', currentSessionId);
+                }
+            } catch (error) {
+                console.error('Error iniciando sesión:', error);
+            }
+        }
+
+        // Finalizar sesión de visualización
+        async function endWatchSession(completed = false) {
+            if (!isTracking || !currentSessionId) {
+                return;
+            }
+
+            try {
+                // Obtener tiempo real del reproductor
+                const currentTime = player ? Math.floor(player.getCurrentTime()) : 0;
+                
+                console.log('Finalizando sesión:', currentSessionId, 'Segundos:', currentTime);
+
+                const response = await fetch('/api/log-watch', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        action: 'end',
+                        sessionId: currentSessionId,
+                        seconds: currentTime,
+                        completed: completed
+                    })
+                });
+
+                const data = await response.json();
+                
+                if (data.success) {
+                    console.log('Sesión finalizada correctamente');
+                }
+
+                // Reset variables
+                currentSessionId = null;
+                sessionStartTime = null;
+                isTracking = false;
+
+            } catch (error) {
+                console.error('Error finalizando sesión:', error);
+            }
+        }
+
+        // ===== FIN FUNCIONES DE TRACKING =====
+
+        // Cargar videos desde API
         async function loadVideosFromAPI() {
             try {
                 console.log('Cargando videos desde API...');
@@ -344,7 +429,6 @@
                 const data = await response.json();
                 const videosData = Array.isArray(data) ? data : (data.videos || []);
                 
-                // Convertir a formato con ID extraído
                 allVideos = videosData.map(video => ({
                     id: extractVideoId(video.url),
                     nombre: video.nombre,
@@ -356,7 +440,6 @@
                 
                 console.log('Videos cargados:', allVideos.length);
                 
-                // Mezclar aleatoriamente
                 displayedVideos = shuffleArray([...allVideos]);
                 currentVideoIndex = 0;
                 
@@ -370,7 +453,6 @@
             }
         }
 
-        // Función para mezclar array aleatoriamente
         function shuffleArray(array) {
             const shuffled = [...array];
             for (let i = shuffled.length - 1; i > 0; i--) {
@@ -380,22 +462,19 @@
             return shuffled;
         }
 
-        // Función de búsqueda
+        // Búsqueda
         function performSearch() {
             const input = document.getElementById('search-input');
             searchQuery = input.value.trim().toLowerCase();
             
             if (!searchQuery) {
-                // Si está vacío, mostrar todos
                 displayedVideos = shuffleArray([...allVideos]);
                 document.getElementById('search-status').classList.add('hidden');
             } else {
-                // Filtrar videos
                 displayedVideos = allVideos.filter(video => 
                     video.nombre.toLowerCase().includes(searchQuery)
                 );
                 
-                // Mostrar estado de búsqueda
                 const status = document.getElementById('search-status');
                 status.textContent = `Mostrando ${displayedVideos.length} resultado(s) para "${searchQuery}"`;
                 status.classList.remove('hidden');
@@ -405,35 +484,16 @@
             displayVideos();
             updateVideoCount();
             
-            // Si hay resultados, cargar el primer video
             if (displayedVideos.length > 0) {
                 loadMainVideo(0);
             }
         }
 
-        // Limpiar búsqueda
         function clearSearch() {
             document.getElementById('search-input').value = '';
             performSearch();
         }
 
-        // Escuchar Enter en el input de búsqueda
-        document.addEventListener('DOMContentLoaded', function() {
-            const searchInput = document.getElementById('search-input');
-            searchInput.addEventListener('keypress', function(e) {
-                if (e.key === 'Enter') {
-                    performSearch();
-                }
-            });
-            
-            // Búsqueda en tiempo real (opcional)
-            searchInput.addEventListener('input', function() {
-                // Si quieres búsqueda en tiempo real, descomenta esto:
-                // performSearch();
-            });
-        });
-
-        // Actualizar contador de videos
         function updateVideoCount() {
             const count = document.getElementById('video-count');
             if (searchQuery) {
@@ -486,22 +546,38 @@
             updateVideoInfo();
         }
 
-        // Cuando el reproductor está listo
         function onPlayerReady(event) {
             console.log('Reproductor listo');
         }
 
-        // Detectar cambios de estado del video
+        // Detectar cambios de estado del video - MODIFICADO PARA TRACKING
         function onPlayerStateChange(event) {
+            console.log('Estado del video:', event.data);
+            
+            const video = displayedVideos[currentVideoIndex];
+            
+            // PLAYING (1) - Video comenzó o reanudó
+            if (event.data === YT.PlayerState.PLAYING) {
+                if (!isTracking) {
+                    startWatchSession(video.id, video.nombre);
+                }
+            }
+            
+            // PAUSED (2) - Video pausado
+            if (event.data === YT.PlayerState.PAUSED) {
+                endWatchSession(false);
+            }
+            
+            // ENDED (0) - Video terminado
             if (event.data === YT.PlayerState.ENDED) {
-                console.log('Video terminado, pasando al siguiente...');
+                endWatchSession(true);
+                
                 setTimeout(() => {
                     playNextVideo();
                 }, 1000);
             }
         }
 
-        // Reproducir siguiente video automáticamente
         function playNextVideo() {
             if (displayedVideos.length === 0) return;
             
@@ -514,7 +590,6 @@
             displayVideos();
         }
 
-        // Actualizar información del video
         function updateVideoInfo() {
             if (displayedVideos.length === 0) return;
             
@@ -523,7 +598,6 @@
             document.getElementById('video-views').textContent = video.views + ' • Contenido seguro';
         }
 
-        // Función para mostrar videos en sidebar
         function displayVideos() {
             const sidebar = document.getElementById('videos-sidebar');
             sidebar.innerHTML = '';
@@ -550,7 +624,6 @@
             });
         }
 
-        // Crear elemento de video para sidebar con highlight
         function createVideoElement(video, index) {
             const div = document.createElement('div');
             const isCurrentVideo = index === currentVideoIndex;
@@ -558,7 +631,6 @@
             div.className = `video-thumbnail flex space-x-3 p-3 hover:bg-gray-100 rounded-lg cursor-pointer transition-colors ${isCurrentVideo ? 'current-video' : ''}`;
             div.onclick = () => loadMainVideo(index);
 
-            // Highlight del término de búsqueda
             let displayName = video.nombre;
             if (searchQuery) {
                 const regex = new RegExp(`(${searchQuery})`, 'gi');
@@ -590,8 +662,12 @@
             return div;
         }
 
-        // Cargar video principal manualmente (click en sidebar)
         function loadMainVideo(index) {
+            // Finalizar sesión actual antes de cambiar
+            if (isTracking) {
+                endWatchSession(false);
+            }
+
             currentVideoIndex = index;
             const video = displayedVideos[index];
             
@@ -603,7 +679,6 @@
             displayVideos();
         }
 
-        // Mostrar error
         function showError() {
             const sidebar = document.getElementById('videos-sidebar');
             sidebar.innerHTML = `
@@ -627,18 +702,6 @@
             }
         `;
         document.head.appendChild(style);
-
-        // Inicializar cuando se carga la página
-        document.addEventListener('DOMContentLoaded', function() {
-            if (window.YT && window.YT.Player) {
-                loadVideosFromAPI();
-            }
-            
-            // Configurar modo cine como inicial
-            setTimeout(() => {
-                setVideoSize('cinema');
-            }, 100);
-        });
 
         // Control de tamaños del video
         function setVideoSize(size) {
@@ -678,6 +741,39 @@
                     break;
             }
         }
+
+        // BEFOREUNLOAD - Guardar sesión si cierra la pestaña
+        window.addEventListener('beforeunload', function(e) {
+            if (isTracking && currentSessionId) {
+                // Usar sendBeacon para garantizar que se envíe antes de cerrar
+                const data = JSON.stringify({
+                    action: 'end',
+                    sessionId: currentSessionId,
+                    seconds: player ? Math.floor(player.getCurrentTime()) : 0,
+                    completed: false
+                });
+                
+                navigator.sendBeacon('/api/log-watch', new Blob([data], { type: 'application/json' }));
+            }
+        });
+
+        // Event listeners
+        document.addEventListener('DOMContentLoaded', function() {
+            if (window.YT && window.YT.Player) {
+                loadVideosFromAPI();
+            }
+            
+            const searchInput = document.getElementById('search-input');
+            searchInput.addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') {
+                    performSearch();
+                }
+            });
+            
+            setTimeout(() => {
+                setVideoSize('cinema');
+            }, 100);
+        });
     </script>
 </body>
 </html>
