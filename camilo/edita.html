@@ -28,9 +28,9 @@
         .video-title { font-size: 1.1rem; font-weight: 600; color: #1f2937; margin-bottom: 0.5rem; line-height: 1.4; }
         .video-url { font-size: 0.875rem; color: #6b7280; font-family: 'Courier New', monospace; word-break: break-all; margin-bottom: 1rem; }
         .video-actions { display: flex; justify-content: space-between; align-items: center; }
-        .btn-primary { background: #ef4444; color: white; padding: 0.5rem 1rem; border-radius: 6px; font-size: 0.875rem; font-weight: 500; transition: background 0.2s ease; }
+        .btn-primary { background: #ef4444; color: white; padding: 0.5rem 1rem; border-radius: 6px; font-size: 0.875rem; font-weight: 500; transition: background 0.2s ease; cursor: pointer; border: none; }
         .btn-primary:hover { background: #dc2626; }
-        .btn-secondary { background: #f3f4f6; color: #374151; padding: 0.5rem 1rem; border-radius: 6px; font-size: 0.875rem; font-weight: 500; transition: background 0.2s ease; }
+        .btn-secondary { background: #f3f4f6; color: #374151; padding: 0.5rem 1rem; border-radius: 6px; font-size: 0.875rem; font-weight: 500; transition: background 0.2s ease; cursor: pointer; border: none; }
         .btn-secondary:hover { background: #e5e7eb; }
         .empty-state { text-align: center; padding: 3rem; color: #6b7280; }
         .loading-skeleton { background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%); background-size: 200% 100%; animation: loading 1.5s infinite; border-radius: 12px; height: 320px; }
@@ -42,7 +42,7 @@
     <div id="loading-overlay" class="loading-overlay flex items-center justify-center">
         <div class="text-center">
             <div class="animate-spin w-16 h-16 border-4 border-blue-600 border-t-transparent rounded-full mx-auto mb-4"></div>
-            <p class="text-gray-600 text-lg">Sincronizando con Edge Config...</p>
+            <p class="text-gray-600 text-lg">Procesando...</p>
         </div>
     </div>
 
@@ -92,7 +92,7 @@
                         <svg class="w-4 h-4 mr-2 inline" fill="currentColor" viewBox="0 0 24 24">
                             <path d="M17.65 6.35C16.2 4.9 14.21 4 12 4c-4.42 0-7.99 3.58-7.99 8s3.57 8 7.99 8c3.73 0 6.84-2.55 7.73-6h-2.08c-.82 2.33-3.04 4-5.65 4-3.31 0-6-2.69-6-6s2.69-6 6-6c1.66 0 3.14.69 4.22 1.78L13 11h7V4l-2.35 2.35z"/>
                         </svg>
-                        Sincronizar
+                        Recargar
                     </button>
                 </div>
             </div>
@@ -205,304 +205,328 @@
         </div>
     </div>
 
-<script>
-    // ===== CONFIGURACIÓN =====
-    let videos = [];
-    let isLoading = false;
+    <script>
+        // ===== CONFIGURACIÓN =====
+        let videos = [];
+        let isLoading = false;
 
-    // Función para extraer ID de YouTube
-    function extractVideoId(url) {
-        const regExp = /^.*((youtu.be\/)|(v\/)|(\/u\/\w\/)|(embed\/)|(watch\?))\??v?=?([^#&?]*).*/;
-        const match = url.match(regExp);
-        return (match && match[7].length === 11) ? match[7] : null;
-    }
-
-    // Cargar videos desde API
-async function loadVideos() {
-    setSyncStatus('Cargando...', 'text-yellow-600');
-    
-    try {
-        console.log('Cargando videos desde API...');
-        
-        const response = await fetch('/api/get-videos');
-        
-        if (!response.ok) {
-            throw new Error(`Error ${response.status}`);
+        // Función para extraer ID de YouTube
+        function extractVideoId(url) {
+            const regExp = /^.*((youtu.be\/)|(v\/)|(\/u\/\w\/)|(embed\/)|(watch\?))\??v?=?([^#&?]*).*/;
+            const match = url.match(regExp);
+            return (match && match[7].length === 11) ? match[7] : null;
         }
-        
-        const data = await response.json();
-        videos = Array.isArray(data) ? data : (data.videos || []);
-        
-        console.log('Videos cargados:', videos.length);
-        
-        displayVideos();
-        updateStats();
-        setSyncStatus('Sincronizado', 'text-green-600');
-        
-    } catch (error) {
-        console.error('Error cargando videos:', error);
-        setSyncStatus('Error', 'text-red-600');
-        showNotification('Error al cargar videos: ' + error.message, 'error');
-    }
-}
 
-    // Guardar videos en API
-    async function saveVideos() {
-        if (isLoading) return;
-        
-        setLoading(true);
-        setSyncStatus('Guardando...', 'text-yellow-600');
-        
-        try {
-            console.log('Guardando videos...');
+        // Cargar videos desde API
+        async function loadVideos() {
+            if (isLoading) return;
             
-            const response = await fetch('/api/update-videos', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({ videos: videos })
-            });
+            setLoading(true);
+            setSyncStatus('Cargando...', 'text-yellow-600');
             
-            if (!response.ok) {
-                throw new Error(`Error ${response.status}`);
+            try {
+                console.log('Cargando videos desde API...');
+                
+                const response = await fetch('/api/get-videos');
+                
+                if (!response.ok) {
+                    throw new Error(`Error ${response.status}`);
+                }
+                
+                const data = await response.json();
+                videos = Array.isArray(data) ? data : (data.videos || []);
+                
+                console.log('Videos cargados:', videos.length);
+                
+                displayVideos();
+                updateStats();
+                setSyncStatus('Sincronizado', 'text-green-600');
+                
+            } catch (error) {
+                console.error('Error cargando videos:', error);
+                setSyncStatus('Error', 'text-red-600');
+                showNotification('Error al cargar videos: ' + error.message, 'error');
+            } finally {
+                setLoading(false);
+            }
+        }
+
+        // Guardar videos en API (función auxiliar, si se necesita)
+        async function saveVideos() {
+            if (isLoading) return;
+            
+            setLoading(true);
+            setSyncStatus('Guardando...', 'text-yellow-600');
+            
+            try {
+                console.log('Guardando videos...');
+                
+                const response = await fetch('/api/update-videos', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ videos: videos })
+                });
+                
+                if (!response.ok) {
+                    throw new Error(`Error ${response.status}`);
+                }
+                
+                console.log('Videos guardados');
+                
+                setSyncStatus('Sincronizado', 'text-green-600');
+                updateStats();
+                showNotification('Videos guardados correctamente', 'success');
+                
+            } catch (error) {
+                console.error('Error guardando videos:', error);
+                setSyncStatus('Error', 'text-red-600');
+                showNotification('Error al guardar videos: ' + error.message, 'error');
+            } finally {
+                setLoading(false);
+            }
+        }
+
+        // Agregar nuevo video
+        async function addVideo() {
+            const nameInput = document.getElementById('video-name');
+            const urlInput = document.getElementById('video-url');
+            const name = nameInput.value.trim();
+            const url = urlInput.value.trim();
+            
+            if (!name) {
+                showNotification('Por favor ingresa un nombre para el video', 'error');
+                nameInput.focus();
+                return;
             }
             
-            console.log('Videos guardados');
+            if (!url) {
+                showNotification('Por favor ingresa una URL', 'error');
+                urlInput.focus();
+                return;
+            }
             
-            setSyncStatus('Sincronizado', 'text-green-600');
-            updateStats();
-            showNotification('Videos guardados correctamente', 'success');
+            // Validar que sea una URL de YouTube
+            const videoId = extractVideoId(url);
+            if (!videoId) {
+                showNotification('URL de YouTube inválida', 'error');
+                urlInput.focus();
+                return;
+            }
             
-        } catch (error) {
-            console.error('Error guardando videos:', error);
-            setSyncStatus('Error', 'text-red-600');
-            showNotification('Error al guardar videos: ' + error.message, 'error');
-        } finally {
-            setLoading(false);
+            setLoading(true);
+            
+            try {
+                const response = await fetch('/api/add-video', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ nombre: name, url: url })
+                });
+                
+                const data = await response.json();
+                
+                if (!response.ok) {
+                    throw new Error(data.error || `Error ${response.status}`);
+                }
+                
+                nameInput.value = '';
+                urlInput.value = '';
+                
+                showNotification('Video agregado correctamente', 'success');
+                await loadVideos();
+                
+            } catch (error) {
+                console.error('Error:', error);
+                showNotification('Error: ' + error.message, 'error');
+            } finally {
+                setLoading(false);
+            }
         }
-    }
 
-
-// Agregar nuevo video
-async function addVideo() {
-    const nameInput = document.getElementById('video-name');
-    const urlInput = document.getElementById('video-url');
-    const name = nameInput.value.trim();
-    const url = urlInput.value.trim();
-    
-    if (!name) {
-        showNotification('Por favor ingresa un nombre para el video', 'error');
-        nameInput.focus();
-        return;
-    }
-    
-    if (!url) {
-        showNotification('Por favor ingresa una URL', 'error');
-        urlInput.focus();
-        return;
-    }
-    
-    setLoading(true);
-    
-    try {
-        const response = await fetch('/api/add-video', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({ nombre: name, url: url })
-        });
-        
-        const data = await response.json();
-        
-        if (!response.ok) {
-            throw new Error(data.error || `Error ${response.status}`);
+        // Eliminar video
+        async function removeVideo(videoId) {
+            const video = videos.find(v => extractVideoId(v.url) === videoId);
+            
+            if (!video) {
+                showNotification('Video no encontrado', 'error');
+                return;
+            }
+            
+            if (!confirm(`¿Estás seguro de que quieres eliminar "${video.nombre}"?`)) {
+                return;
+            }
+            
+            setLoading(true);
+            
+            try {
+                const response = await fetch(`/api/delete-video?videoId=${encodeURIComponent(videoId)}`, {
+                    method: 'DELETE'
+                });
+                
+                const data = await response.json();
+                
+                if (!response.ok) {
+                    throw new Error(data.error || `Error ${response.status}`);
+                }
+                
+                showNotification('Video eliminado correctamente', 'success');
+                await loadVideos();
+                
+            } catch (error) {
+                console.error('Error:', error);
+                showNotification('Error: ' + error.message, 'error');
+            } finally {
+                setLoading(false);
+            }
         }
-        
-        nameInput.value = '';
-        urlInput.value = '';
-        
-        showNotification('Video agregado correctamente', 'success');
-        await loadVideos();
-        
-    } catch (error) {
-        console.error('Error:', error);
-        showNotification('Error: ' + error.message, 'error');
-    } finally {
-        setLoading(false);
-    }
-}
 
-// Eliminar video
-async function removeVideo(videoId) {
-    const video = videos.find(v => extractVideoId(v.url) === videoId);
-    
-    if (!confirm(`¿Estás seguro de que quieres eliminar "${video.nombre}"?`)) {
-        return;
-    }
-    
-    setLoading(true);
-    
-    try {
-        const response = await fetch(`/api/delete-video?videoId=${videoId}`, {
-            method: 'DELETE'
-        });
-        
-        const data = await response.json();
-        
-        if (!response.ok) {
-            throw new Error(data.error || `Error ${response.status}`);
-        }
-        
-        showNotification('Video eliminado correctamente', 'success');
-        await loadVideos();
-        
-    } catch (error) {
-        console.error('Error:', error);
-        showNotification('Error: ' + error.message, 'error');
-    } finally {
-        setLoading(false);
-    }
-}
-
-// Mostrar videos en la interfaz
-function displayVideos() {
-    const container = document.getElementById('videos-container');
-    container.innerHTML = '';
-    
-    if (videos.length === 0) {
-        container.innerHTML = `
-            <div class="empty-state col-span-full">
-                <svg class="w-16 h-16 mx-auto mb-4 text-gray-300" fill="currentColor" viewBox="0 0 24 24">
-                    <path d="M8 5v14l11-7z"/>
-                </svg>
-                <p class="text-lg font-medium">No hay videos</p>
-                <p class="text-sm">Agrega tu primer video usando el formulario de arriba</p>
-            </div>
-        `;
-        return;
-    }
-    
-    videos.forEach((video, index) => {
-        const videoElement = createVideoCard(video, index);
-        container.appendChild(videoElement);
-    });
-}
-
-    // Crear tarjeta de video
-    function createVideoCard(video, index) {
-        const videoId = extractVideoId(video.url);
-        
-        const div = document.createElement('div');
-        div.className = 'video-card';
-        
-        div.innerHTML = `
-            <div class="video-thumbnail">
-                <img 
-                    src="https://img.youtube.com/vi/${videoId}/maxresdefault.jpg" 
-                    alt="${video.nombre}"
-                    onerror="this.src='https://img.youtube.com/vi/${videoId}/hqdefault.jpg'"
-                >
-                <div class="play-overlay">
-                    <svg class="w-6 h-6 text-white" fill="currentColor" viewBox="0 0 24 24">
-                        <path d="M8 5v14l11-7z"/>
-                    </svg>
-                </div>
-            </div>
-            <div class="video-info">
-                <h3 class="video-title">${video.nombre}</h3>
-                <p class="video-url">${video.url}</p>
-                <div class="video-actions">
-                    <button 
-                        onclick="window.open('${video.url}', '_blank')"
-                        class="btn-secondary"
-                    >
-                        <svg class="w-4 h-4 inline mr-1" fill="currentColor" viewBox="0 0 24 24">
-                            <path d="M19 19H5V5h7V3H5c-1.11 0-2 .9-2 2v14c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2v-7h-2v7zM14 3v2h3.59l-9.83 9.83 1.41 1.41L19 6.41V10h2V3h-7z"/>
+        // Mostrar videos en la interfaz
+        function displayVideos() {
+            const container = document.getElementById('videos-container');
+            container.innerHTML = '';
+            
+            if (videos.length === 0) {
+                container.innerHTML = `
+                    <div class="empty-state col-span-full">
+                        <svg class="w-16 h-16 mx-auto mb-4 text-gray-300" fill="currentColor" viewBox="0 0 24 24">
+                            <path d="M8 5v14l11-7z"/>
                         </svg>
-                        Ver
-                    </button>
-                    <button 
-                        onclick="removeVideo('${videoId}')"
-                        class="btn-primary"
+                        <p class="text-lg font-medium">No hay videos</p>
+                        <p class="text-sm">Agrega tu primer video usando el formulario de arriba</p>
+                    </div>
+                `;
+                return;
+            }
+            
+            videos.forEach((video, index) => {
+                const videoElement = createVideoCard(video, index);
+                container.appendChild(videoElement);
+            });
+        }
+
+        // Crear tarjeta de video
+        function createVideoCard(video, index) {
+            const videoId = extractVideoId(video.url);
+            
+            const div = document.createElement('div');
+            div.className = 'video-card';
+            
+            div.innerHTML = `
+                <div class="video-thumbnail">
+                    <img 
+                        src="https://img.youtube.com/vi/${videoId}/maxresdefault.jpg" 
+                        alt="${video.nombre}"
+                        onerror="this.src='https://img.youtube.com/vi/${videoId}/hqdefault.jpg'"
                     >
-                        <svg class="w-4 h-4 inline mr-1" fill="currentColor" viewBox="0 0 24 24">
-                            <path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"/>
+                    <div class="play-overlay">
+                        <svg class="w-6 h-6 text-white" fill="currentColor" viewBox="0 0 24 24">
+                            <path d="M8 5v14l11-7z"/>
                         </svg>
-                        Eliminar
-                    </button>
+                    </div>
                 </div>
-            </div>
-        `;
-        
-        return div;
-    }
-
-    // Actualizar estadísticas
-    function updateStats() {
-        document.getElementById('total-count').textContent = videos.length;
-        document.getElementById('loaded-count').textContent = videos.length;
-        document.getElementById('last-update').textContent = new Date().toLocaleTimeString();
-    }
-
-    // Estado de carga
-    function setLoading(loading) {
-        isLoading = loading;
-        const overlay = document.getElementById('loading-overlay');
-        overlay.style.display = loading ? 'flex' : 'none';
-    }
-
-    // Estado de sincronización
-    function setSyncStatus(status, className) {
-        const element = document.getElementById('sync-status');
-        element.textContent = status;
-        element.className = `text-lg font-semibold ${className}`;
-    }
-
-    // Mostrar notificación
-    function showNotification(message, type = 'success') {
-        const notification = document.getElementById('notification');
-        const messageElement = document.getElementById('notification-message');
-        const iconElement = document.getElementById('notification-icon');
-        
-        messageElement.textContent = message;
-        notification.className = `notification ${type} show`;
-        
-        if (type === 'error') {
-            iconElement.innerHTML = `<path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd"/>`;
-            iconElement.className = 'w-5 h-5 text-red-500';
-        } else {
-            iconElement.innerHTML = `<path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>`;
-            iconElement.className = 'w-5 h-5 text-green-500';
+                <div class="video-info">
+                    <h3 class="video-title">${escapeHtml(video.nombre)}</h3>
+                    <p class="video-url">${escapeHtml(video.url)}</p>
+                    <div class="video-actions">
+                        <button 
+                            onclick="window.open('${escapeHtml(video.url)}', '_blank')"
+                            class="btn-secondary"
+                        >
+                            <svg class="w-4 h-4 inline mr-1" fill="currentColor" viewBox="0 0 24 24">
+                                <path d="M19 19H5V5h7V3H5c-1.11 0-2 .9-2 2v14c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2v-7h-2v7zM14 3v2h3.59l-9.83 9.83 1.41 1.41L19 6.41V10h2V3h-7z"/>
+                            </svg>
+                            Ver
+                        </button>
+                        <button 
+                            onclick="removeVideo('${videoId}')"
+                            class="btn-primary"
+                        >
+                            <svg class="w-4 h-4 inline mr-1" fill="currentColor" viewBox="0 0 24 24">
+                                <path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z"/>
+                            </svg>
+                            Eliminar
+                        </button>
+                    </div>
+                </div>
+            `;
+            
+            return div;
         }
-        
-        setTimeout(() => hideNotification(), 5000);
-    }
 
-    // Ocultar notificación
-    function hideNotification() {
-        const notification = document.getElementById('notification');
-        notification.classList.remove('show');
-    }
-
-    // Enter key en inputs
-    document.getElementById('video-name').addEventListener('keypress', function(e) {
-        if (e.key === 'Enter') {
-            document.getElementById('video-url').focus();
+        // Función para escapar HTML y prevenir XSS
+        function escapeHtml(text) {
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
         }
-    });
 
-    document.getElementById('video-url').addEventListener('keypress', function(e) {
-        if (e.key === 'Enter') {
-            addVideo();
+        // Actualizar estadísticas
+        function updateStats() {
+            document.getElementById('total-count').textContent = videos.length;
+            document.getElementById('loaded-count').textContent = videos.length;
+            document.getElementById('last-update').textContent = new Date().toLocaleTimeString('es-ES');
         }
-    });
 
-    // Inicializar al cargar la página
-    document.addEventListener('DOMContentLoaded', function() {
-        loadVideos();
-    });
-</script>
+        // Estado de carga
+        function setLoading(loading) {
+            isLoading = loading;
+            const overlay = document.getElementById('loading-overlay');
+            overlay.style.display = loading ? 'flex' : 'none';
+        }
+
+        // Estado de sincronización
+        function setSyncStatus(status, className) {
+            const element = document.getElementById('sync-status');
+            element.textContent = status;
+            element.className = `text-lg font-semibold ${className}`;
+        }
+
+        // Mostrar notificación
+        function showNotification(message, type = 'success') {
+            const notification = document.getElementById('notification');
+            const messageElement = document.getElementById('notification-message');
+            const iconElement = document.getElementById('notification-icon');
+            
+            messageElement.textContent = message;
+            notification.className = `notification ${type} show`;
+            
+            if (type === 'error') {
+                iconElement.innerHTML = `<path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd"/>`;
+                iconElement.className = 'w-5 h-5 text-red-500';
+            } else {
+                iconElement.innerHTML = `<path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>`;
+                iconElement.className = 'w-5 h-5 text-green-500';
+            }
+            
+            setTimeout(() => hideNotification(), 5000);
+        }
+
+        // Ocultar notificación
+        function hideNotification() {
+            const notification = document.getElementById('notification');
+            notification.classList.remove('show');
+        }
+
+        // Enter key en inputs
+        document.getElementById('video-name').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                document.getElementById('video-url').focus();
+            }
+        });
+
+        document.getElementById('video-url').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                addVideo();
+            }
+        });
+
+        // Inicializar al cargar la página
+        document.addEventListener('DOMContentLoaded', function() {
+            loadVideos();
+        });
+    </script>
 </body>
 </html>
