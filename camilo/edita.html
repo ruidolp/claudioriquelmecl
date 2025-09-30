@@ -218,11 +218,7 @@
     }
 
     // Cargar videos desde API
-// Cargar videos desde API
 async function loadVideos() {
-    if (isLoading) return;
-    
-    setLoading(true);
     setSyncStatus('Cargando...', 'text-yellow-600');
     
     try {
@@ -242,14 +238,11 @@ async function loadVideos() {
         displayVideos();
         updateStats();
         setSyncStatus('Sincronizado', 'text-green-600');
-        showNotification('Videos cargados correctamente', 'success');
         
     } catch (error) {
         console.error('Error cargando videos:', error);
         setSyncStatus('Error', 'text-red-600');
         showNotification('Error al cargar videos: ' + error.message, 'error');
-    } finally {
-        setLoading(false);
     }
 }
 
