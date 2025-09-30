@@ -289,85 +289,88 @@ videos = Array.isArray(data) ? data : (data.videos || []);
         }
     }
 
-    // Agregar nuevo video
-    async function addVideo() {
-        const nameInput = document.getElementById('video-name');
-        const urlInput = document.getElementById('video-url');
-        const name = nameInput.value.trim();
-        const url = urlInput.value.trim();
-        
-        if (!name) {
-            showNotification('Por favor ingresa un nombre para el video', 'error');
-            nameInput.focus();
-            return;
-        }
-        
-        if (!url) {
-            showNotification('Por favor ingresa una URL', 'error');
-            urlInput.focus();
-            return;
-        }
-        
-        const videoId = extractVideoId(url);
-        
-        if (!videoId) {
-            showNotification('URL de YouTube inválida', 'error');
-            urlInput.focus();
-            return;
-        }
-        
-        if (videos.some(video => video.url === url)) {
-            showNotification('Esta URL ya está en la lista', 'error');
-            return;
-        }
-        
-        videos.push({
-            nombre: name,
-            url: url
+
+// Agregar nuevo video
+async function addVideo() {
+    const nameInput = document.getElementById('video-name');
+    const urlInput = document.getElementById('video-url');
+    const name = nameInput.value.trim();
+    const url = urlInput.value.trim();
+    
+    if (!name) {
+        showNotification('Por favor ingresa un nombre para el video', 'error');
+        nameInput.focus();
+        return;
+    }
+    
+    if (!url) {
+        showNotification('Por favor ingresa una URL', 'error');
+        urlInput.focus();
+        return;
+    }
+    
+    setLoading(true);
+    
+    try {
+        const response = await fetch('/api/add-video', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ nombre: name, url: url })
         });
+        
+        const data = await response.json();
+        
+        if (!response.ok) {
+            throw new Error(data.error || `Error ${response.status}`);
+        }
         
         nameInput.value = '';
         urlInput.value = '';
         
-        await saveVideos();
-        displayVideos();
+        showNotification('Video agregado correctamente', 'success');
+        await loadVideos();
+        
+    } catch (error) {
+        console.error('Error:', error);
+        showNotification('Error: ' + error.message, 'error');
+    } finally {
+        setLoading(false);
     }
+}
 
-    // Eliminar video
-    async function removeVideo(index) {
-        const video = videos[index];
-        if (!confirm(`¿Estás seguro de que quieres eliminar "${video.nombre}"?`)) {
-            return;
-        }
-        
-        videos.splice(index, 1);
-        await saveVideos();
-        displayVideos();
+// Eliminar video
+async function removeVideo(videoId) {
+    const video = videos.find(v => extractVideoId(v.url) === videoId);
+    
+    if (!confirm(`¿Estás seguro de que quieres eliminar "${video.nombre}"?`)) {
+        return;
     }
-
-    // Mostrar videos en la interfaz
-    function displayVideos() {
-        const container = document.getElementById('videos-container');
-        container.innerHTML = '';
-        
-        if (videos.length === 0) {
-            container.innerHTML = `
-                <div class="empty-state col-span-full">
-                    <svg class="w-16 h-16 mx-auto mb-4 text-gray-300" fill="currentColor" viewBox="0 0 24 24">
-                        <path d="M8 5v14l11-7z"/>
-                    </svg>
-                    <p class="text-lg font-medium">No hay videos</p>
-                    <p class="text-sm">Agrega tu primer video usando el formulario de arriba</p>
-                </div>
-            `;
-            return;
-        }
-        
-        videos.forEach((video, index) => {
-            const videoElement = createVideoCard(video, index);
-            container.appendChild(videoElement);
+    
+    setLoading(true);
+    
+    try {
+        const response = await fetch(`/api/delete-video?videoId=${videoId}`, {
+            method: 'DELETE'
         });
+        
+        const data = await response.json();
+        
+        if (!response.ok) {
+            throw new Error(data.error || `Error ${response.status}`);
+        }
+        
+        showNotification('Video eliminado correctamente', 'success');
+        await loadVideos();
+        
+    } catch (error) {
+        console.error('Error:', error);
+        showNotification('Error: ' + error.message, 'error');
+    } finally {
+        setLoading(false);
     }
+}
 
     // Crear tarjeta de video
     function createVideoCard(video, index) {
@@ -403,7 +406,7 @@ videos = Array.isArray(data) ? data : (data.videos || []);
                         Ver
                     </button>
                     <button 
-                        onclick="removeVideo(${index})"
+                        onclick="removeVideo('${videoId}')"
                         class="btn-primary"
                     >
                         <svg class="w-4 h-4 inline mr-1" fill="currentColor" viewBox="0 0 24 24">
