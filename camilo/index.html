@@ -79,7 +79,7 @@
             height: auto !important;
             max-height: 500px;
             padding: 0;
-            margin-left: auto !important; /* Esto lo alinea a la derecha */
+            margin-left: auto !important;
             margin-right: 20px !important;
             margin-top: 20px !important;
         }
@@ -118,6 +118,19 @@
             color: #ff0000;
             font-weight: 600;
         }
+
+        /* Highlight para búsqueda */
+        .search-highlight {
+            background-color: #fff3cd;
+            font-weight: 600;
+        }
+
+        /* Mensaje de no resultados */
+        .no-results {
+            text-align: center;
+            padding: 2rem;
+            color: #6b7280;
+        }
     </style>
 </head>
 <body class="youtube-bg text-gray-900 min-h-screen">
@@ -146,11 +159,11 @@
                 <div class="flex">
                     <input 
                         type="text" 
+                        id="search-input"
                         placeholder="Buscar videos seguros..."
                         class="flex-1 px-4 py-2 border border-gray-300 rounded-l-full text-gray-900 placeholder-gray-500 focus:border-blue-500 focus:outline-none bg-white"
-                        disabled
                     >
-                    <button class="px-6 py-2 bg-gray-50 border border-l-0 border-gray-300 rounded-r-full hover:bg-gray-100">
+                    <button onclick="performSearch()" class="px-6 py-2 bg-gray-50 border border-l-0 border-gray-300 rounded-r-full hover:bg-gray-100">
                         <svg class="w-5 h-5 text-gray-600" fill="currentColor" viewBox="0 0 24 24">
                             <path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/>
                         </svg>
@@ -282,7 +295,11 @@
         <!-- Sidebar de videos -->
         <div id="sidebar" class="w-96 youtube-sidebar overflow-hidden h-screen">
             <div class="sidebar-header">
-                <h2 class="text-lg font-semibold text-gray-900">Más videos seguros</h2>
+                <div class="flex items-center justify-between mb-2">
+                    <h2 class="text-lg font-semibold text-gray-900">Más videos seguros</h2>
+                    <span id="video-count" class="text-sm text-gray-600"></span>
+                </div>
+                <div id="search-status" class="text-sm text-gray-600 hidden"></div>
             </div>
             
             <div class="sidebar-content">
@@ -300,42 +317,11 @@
     <script src="https://www.youtube.com/iframe_api"></script>
     
     <script>
-        // URLs simples - solo agregar/quitar URLs aquí
-        const videoUrls = [
-            "https://www.youtube.com/watch?v=9HVqZxU8waI",
-            "https://youtu.be/rdUacwdA3_E", 
-            "https://www.youtube.com/watch?v=AG5HnHE__5Y",
-            "https://youtu.be/wuDW2jbMK4M",
-"https://www.youtube.com/watch?v=yScNIsLTLYA",
-"https://youtu.be/5GrPwHrc3HI?list=RD5GrPwHrc3HI&t=81",
-"https://www.youtube.com/watch?v=z6VfoAc5DQc",
-"https://youtu.be/0dgTD3ABYXA?list=RD0dgTD3ABYXA&t=15",
-"https://www.youtube.com/watch?v=-VUF9bTRtH4",
-"https://www.youtube.com/watch?v=odGgJHVCfEo",
-"https://www.youtube.com/watch?v=Y1vP1gBNiik",
-"https://www.youtube.com/watch?v=trtqAg_PTbA",
-"https://www.youtube.com/watch?v=orBygrdo4Sw",
-"https://www.youtube.com/watch?v=CZWAYlX6aJg",
-"https://www.youtube.com/watch?v=-zpW8uPBVuM",
-"https://www.youtube.com/watch?v=AD7J5PEn3ZM",
-"https://www.youtube.com/watch?v=3JYpCWTddVw",
-"https://www.youtube.com/watch?v=R4UrF9p8tis",
-"https://www.youtube.com/watch?v=i-CLV1aHLdE",
-"https://youtu.be/PLRpiFEuLac?si=zVP0MqJUI4rDAxjX",
-"https://www.youtube.com/watch?v=I54xptPLhkc",
-"https://youtu.be/iL3IrrytswA?si=wVhYHNqVEQZmxIUM",
-"https://www.youtube.com/watch?v=isoLfPpDV3E",
-"https://youtu.be/G03MAWPmzB4?si=NWg68uyWpscVmhlT",
-"https://youtu.be/0JxzhxrnPGU?si=9iMwHJbOmIZzBkhR",
-"https://youtu.be/2XqcySTrMSU?si=ArybcvIwuuRqsRHw",
-"https://youtu.be/WOHBo79sq5s?si=KrCAABcbGWkZySqo",
-"https://youtu.be/AG5HnHE__5Y?si=gMtvBqIvF6SElg0-",
-"https://youtu.be/mXSKVrMqlWU?si=lM78KafiIAm98cey"
-        ];
-
         let currentVideoIndex = 0;
-        let videos = [];
+        let allVideos = [];  // Todos los videos desde el API
+        let displayedVideos = [];  // Videos filtrados actualmente mostrados
         let player = null;
+        let searchQuery = '';
 
         // Función para extraer ID de cualquier formato de URL de YouTube
         function extractVideoId(url) {
@@ -344,15 +330,44 @@
             return (match && match[7].length === 11) ? match[7] : null;
         }
 
-        // Función para convertir URLs a objetos simples
-        function processVideoUrls(urls) {
-            return urls.map((url, index) => ({
-                id: extractVideoId(url),
-                title: `Video Seguro ${index + 1}`,
-                channel: "KidsPlay",
-                views: `${Math.floor(Math.random() * 900 + 100)}K visualizaciones`,
-                duration: `${Math.floor(Math.random() * 8 + 2)}:${String(Math.floor(Math.random() * 60)).padStart(2, '0')}`
-            }));
+        // Cargar videos desde el API
+        async function loadVideosFromAPI() {
+            try {
+                console.log('Cargando videos desde API...');
+                
+                const response = await fetch('/api/get-videos');
+                
+                if (!response.ok) {
+                    throw new Error(`Error ${response.status}`);
+                }
+                
+                const data = await response.json();
+                const videosData = Array.isArray(data) ? data : (data.videos || []);
+                
+                // Convertir a formato con ID extraído
+                allVideos = videosData.map(video => ({
+                    id: extractVideoId(video.url),
+                    nombre: video.nombre,
+                    url: video.url,
+                    channel: "KidsPlay",
+                    views: `${Math.floor(Math.random() * 900 + 100)}K visualizaciones`,
+                    duration: `${Math.floor(Math.random() * 8 + 2)}:${String(Math.floor(Math.random() * 60)).padStart(2, '0')}`
+                }));
+                
+                console.log('Videos cargados:', allVideos.length);
+                
+                // Mezclar aleatoriamente
+                displayedVideos = shuffleArray([...allVideos]);
+                currentVideoIndex = 0;
+                
+                displayVideos();
+                createPlayer();
+                updateVideoCount();
+                
+            } catch (error) {
+                console.error('Error cargando videos:', error);
+                showError();
+            }
         }
 
         // Función para mezclar array aleatoriamente
@@ -365,35 +380,80 @@
             return shuffled;
         }
 
+        // Función de búsqueda
+        function performSearch() {
+            const input = document.getElementById('search-input');
+            searchQuery = input.value.trim().toLowerCase();
+            
+            if (!searchQuery) {
+                // Si está vacío, mostrar todos
+                displayedVideos = shuffleArray([...allVideos]);
+                document.getElementById('search-status').classList.add('hidden');
+            } else {
+                // Filtrar videos
+                displayedVideos = allVideos.filter(video => 
+                    video.nombre.toLowerCase().includes(searchQuery)
+                );
+                
+                // Mostrar estado de búsqueda
+                const status = document.getElementById('search-status');
+                status.textContent = `Mostrando ${displayedVideos.length} resultado(s) para "${searchQuery}"`;
+                status.classList.remove('hidden');
+            }
+            
+            currentVideoIndex = 0;
+            displayVideos();
+            updateVideoCount();
+            
+            // Si hay resultados, cargar el primer video
+            if (displayedVideos.length > 0) {
+                loadMainVideo(0);
+            }
+        }
+
+        // Limpiar búsqueda
+        function clearSearch() {
+            document.getElementById('search-input').value = '';
+            performSearch();
+        }
+
+        // Escuchar Enter en el input de búsqueda
+        document.addEventListener('DOMContentLoaded', function() {
+            const searchInput = document.getElementById('search-input');
+            searchInput.addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') {
+                    performSearch();
+                }
+            });
+            
+            // Búsqueda en tiempo real (opcional)
+            searchInput.addEventListener('input', function() {
+                // Si quieres búsqueda en tiempo real, descomenta esto:
+                // performSearch();
+            });
+        });
+
+        // Actualizar contador de videos
+        function updateVideoCount() {
+            const count = document.getElementById('video-count');
+            if (searchQuery) {
+                count.textContent = `${displayedVideos.length} de ${allVideos.length}`;
+            } else {
+                count.textContent = `${displayedVideos.length} videos`;
+            }
+        }
+
         // Función que se ejecuta cuando la API de YouTube está lista
         function onYouTubeIframeAPIReady() {
             console.log('YouTube API cargada');
-            loadVideos();
-        }
-
-        // Función para cargar videos aleatoriamente
-        function loadVideos() {
-            try {
-                // Convertir URLs a objetos con metadata simple
-                const processedVideos = processVideoUrls(videoUrls);
-                
-                // Mezclar videos aleatoriamente cada vez que se carga la página
-                videos = shuffleArray(processedVideos);
-                
-                // Seleccionar video principal aleatorio
-                currentVideoIndex = 0;
-                
-                displayVideos();
-                createPlayer();
-            } catch (error) {
-                console.error('Error cargando videos:', error);
-                showError();
-            }
+            loadVideosFromAPI();
         }
 
         // Crear el reproductor de YouTube
         function createPlayer() {
-            const video = videos[currentVideoIndex];
+            if (displayedVideos.length === 0) return;
+            
+            const video = displayedVideos[currentVideoIndex];
             
             if (player) {
                 player.loadVideoById(video.id);
@@ -404,16 +464,16 @@
                     videoId: video.id,
                     playerVars: {
                         'autoplay': 1,
-                        'controls': 1,          // Mostrar controles
-                        'rel': 0,               // No videos relacionados
-                        'modestbranding': 0,    // Mostrar logo YouTube (para más opciones)
-                        'fs': 1,                // Permitir pantalla completa
-                        'cc_load_policy': 1,    // Mostrar subtítulos si están disponibles
-                        'iv_load_policy': 3,    // Ocultar anotaciones
-                        'autohide': 0,          // Siempre mostrar controles
-                        'playsinline': 1,       // Para móviles
-                        'enablejsapi': 1,       // Habilitar JavaScript API
-                        'origin': window.location.origin,  // Para seguridad
+                        'controls': 1,
+                        'rel': 0,
+                        'modestbranding': 0,
+                        'fs': 1,
+                        'cc_load_policy': 1,
+                        'iv_load_policy': 3,
+                        'autohide': 0,
+                        'playsinline': 1,
+                        'enablejsapi': 1,
+                        'origin': window.location.origin,
                         'widget_referrer': window.location.href
                     },
                     events: {
@@ -433,23 +493,22 @@
 
         // Detectar cambios de estado del video
         function onPlayerStateChange(event) {
-            console.log('Estado del video:', event.data);
-            
-            // Si el video terminó (estado = 0), pasar al siguiente
             if (event.data === YT.PlayerState.ENDED) {
                 console.log('Video terminado, pasando al siguiente...');
                 setTimeout(() => {
                     playNextVideo();
-                }, 1000); // Esperar 1 segundo antes de cambiar
+                }, 1000);
             }
         }
 
         // Reproducir siguiente video automáticamente
         function playNextVideo() {
-            currentVideoIndex = (currentVideoIndex + 1) % videos.length;
-            console.log('Reproduciendo video:', videos[currentVideoIndex].title);
+            if (displayedVideos.length === 0) return;
             
-            const nextVideo = videos[currentVideoIndex];
+            currentVideoIndex = (currentVideoIndex + 1) % displayedVideos.length;
+            console.log('Reproduciendo video:', displayedVideos[currentVideoIndex].nombre);
+            
+            const nextVideo = displayedVideos[currentVideoIndex];
             player.loadVideoById(nextVideo.id);
             updateVideoInfo();
             displayVideos();
@@ -457,8 +516,10 @@
 
         // Actualizar información del video
         function updateVideoInfo() {
-            const video = videos[currentVideoIndex];
-            document.getElementById('video-title').textContent = video.title;
+            if (displayedVideos.length === 0) return;
+            
+            const video = displayedVideos[currentVideoIndex];
+            document.getElementById('video-title').textContent = video.nombre;
             document.getElementById('video-views').textContent = video.views + ' • Contenido seguro';
         }
 
@@ -467,13 +528,29 @@
             const sidebar = document.getElementById('videos-sidebar');
             sidebar.innerHTML = '';
 
-            videos.forEach((video, index) => {
+            if (displayedVideos.length === 0) {
+                sidebar.innerHTML = `
+                    <div class="no-results">
+                        <svg class="w-16 h-16 mx-auto mb-4 text-gray-300" fill="currentColor" viewBox="0 0 24 24">
+                            <path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/>
+                        </svg>
+                        <p class="text-lg font-medium mb-2">No se encontraron videos</p>
+                        <p class="text-sm mb-4">Intenta con otra búsqueda</p>
+                        <button onclick="clearSearch()" class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700">
+                            Ver todos los videos
+                        </button>
+                    </div>
+                `;
+                return;
+            }
+
+            displayedVideos.forEach((video, index) => {
                 const videoElement = createVideoElement(video, index);
                 sidebar.appendChild(videoElement);
             });
         }
 
-        // Crear elemento de video para sidebar
+        // Crear elemento de video para sidebar con highlight
         function createVideoElement(video, index) {
             const div = document.createElement('div');
             const isCurrentVideo = index === currentVideoIndex;
@@ -481,11 +558,18 @@
             div.className = `video-thumbnail flex space-x-3 p-3 hover:bg-gray-100 rounded-lg cursor-pointer transition-colors ${isCurrentVideo ? 'current-video' : ''}`;
             div.onclick = () => loadMainVideo(index);
 
+            // Highlight del término de búsqueda
+            let displayName = video.nombre;
+            if (searchQuery) {
+                const regex = new RegExp(`(${searchQuery})`, 'gi');
+                displayName = video.nombre.replace(regex, '<span class="search-highlight">$1</span>');
+            }
+
             div.innerHTML = `
                 <div class="flex-shrink-0 relative">
                     <img 
                         src="https://img.youtube.com/vi/${video.id}/mqdefault.jpg" 
-                        alt="${video.title}"
+                        alt="${video.nombre}"
                         class="w-40 h-24 object-cover rounded-lg transition-opacity"
                         onerror="this.src='data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTYwIiBoZWlnaHQ9IjkwIiB2aWV3Qm94PSIwIDAgMTYwIDkwIiBmaWxsPSJub25lIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciPgo8cmVjdCB3aWR0aD0iMTYwIiBoZWlnaHQ9IjkwIiBmaWxsPSIjZjVmNWY1Ii8+CjxwYXRoIGQ9Ik02MCAzNkw5MCA1NEw2MCA3MlYzNloiIGZpbGw9IiNGRjAwMDAiLz4KPC9zdmc+'"
                     >
@@ -496,7 +580,7 @@
                 </div>
                 <div class="flex-1 min-w-0">
                     <h3 class="text-sm font-medium ${isCurrentVideo ? 'current-video-indicator' : 'text-gray-900'} line-clamp-2 mb-2">
-                        ${video.title}
+                        ${displayName}
                     </h3>
                     <p class="text-xs text-gray-600 mb-1">${video.channel}</p>
                     <p class="text-xs text-gray-600">${video.views}</p>
@@ -509,9 +593,8 @@
         // Cargar video principal manualmente (click en sidebar)
         function loadMainVideo(index) {
             currentVideoIndex = index;
-            const video = videos[index];
+            const video = displayedVideos[index];
             
-            // Cargar nuevo video en el reproductor
             if (player && player.loadVideoById) {
                 player.loadVideoById(video.id);
             }
@@ -525,15 +608,15 @@
             const sidebar = document.getElementById('videos-sidebar');
             sidebar.innerHTML = `
                 <div class="text-center p-4 text-gray-600">
-                    <p>Error cargando videos</p>
-                    <button onclick="loadVideos()" class="mt-2 px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700">
+                    <p class="mb-4">Error cargando videos</p>
+                    <button onclick="loadVideosFromAPI()" class="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700">
                         Reintentar
                     </button>
                 </div>
             `;
         }
 
-        // CSS para line-clamp (fallback)
+        // CSS para line-clamp
         const style = document.createElement('style');
         style.textContent = `
             .line-clamp-2 {
@@ -545,49 +628,35 @@
         `;
         document.head.appendChild(style);
 
-        // Inicializar cuando se carga la página - CADA VEZ ES ALEATORIO
+        // Inicializar cuando se carga la página
         document.addEventListener('DOMContentLoaded', function() {
-            // Si la API ya está cargada, inicializar inmediatamente
             if (window.YT && window.YT.Player) {
-                loadVideos();
+                loadVideosFromAPI();
             }
-            // Si no, onYouTubeIframeAPIReady se encargará
+            
+            // Configurar modo cine como inicial
+            setTimeout(() => {
+                setVideoSize('cinema');
+            }, 100);
         });
-
-        // Para debugging - mostrar orden actual de videos
-        function showVideoOrder() {
-            console.log('Orden actual de videos:', videos.map(v => v.title));
-        }
-
-        // Función para saltar manualmente al siguiente video (si quieres agregar un botón)
-        function skipToNext() {
-            playNextVideo();
-        }
 
         // Control de tamaños del video
         function setVideoSize(size) {
             const container = document.getElementById('video-container');
             const wrapper = document.getElementById('video-wrapper');
             const mainContent = document.getElementById('main-content');
-            const videoSection = document.getElementById('video-section');
-            const sidebar = document.getElementById('sidebar');
             
-            // Remover clase activa de todos los botones
             document.querySelectorAll('.size-btn').forEach(btn => {
                 btn.classList.remove('bg-blue-600', 'text-white');
                 btn.classList.add('text-gray-700');
             });
             
-            // Activar botón seleccionado
             document.getElementById(`btn-${size}`).classList.add('bg-blue-600', 'text-white');
             document.getElementById(`btn-${size}`).classList.remove('text-gray-700');
             
-            // Resetear clases
             mainContent.classList.remove('cinema-layout');
             container.classList.remove('cinema-video');
             container.style.maxWidth = '';
-            container.style.marginLeft = '';
-            container.style.marginRight = '';
             
             switch(size) {
                 case 'small':
@@ -603,21 +672,12 @@
                     wrapper.style.paddingBottom = '65%';
                     break;
                 case 'cinema':
-                    // Aplicar layout de modo cine
                     mainContent.classList.add('cinema-layout');
                     container.classList.add('cinema-video');
                     wrapper.style.paddingBottom = '45%';
                     break;
             }
         }
-
-        // Inicializar tamaño cine por defecto
-        document.addEventListener('DOMContentLoaded', function() {
-            // Configurar modo cine como inicial
-            setTimeout(() => {
-                setVideoSize('cinema');
-            }, 100);
-        });
     </script>
 </body>
 </html>
