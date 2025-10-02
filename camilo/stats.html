@@ -244,63 +244,79 @@
             renderTodaySessions(stats.todaySessions);
         }
 
-        // Renderizar gráfico de tendencia diaria
-        function renderDailyChart(dailyStats) {
-            const ctx = document.getElementById('dailyChart').getContext('2d');
+ // Renderizar gráfico de tendencia diaria - CORREGIDO
+function renderDailyChart(dailyStats) {
+    // Destruir gráfico anterior completamente
+    if (dailyChart) {
+        dailyChart.destroy();
+        dailyChart = null;
+    }
 
-            // Destruir gráfico anterior si existe
-            if (dailyChart) {
-                dailyChart.destroy();
-            }
+    // RECREAR EL CANVAS DESDE CERO
+    const container = document.getElementById('dailyChart').parentElement;
+    const oldCanvas = document.getElementById('dailyChart');
+    oldCanvas.remove();
+    
+    const newCanvas = document.createElement('canvas');
+    newCanvas.id = 'dailyChart';
+    container.appendChild(newCanvas);
 
-            const labels = dailyStats.map(d => {
-                const date = new Date(d.watch_date);
-                return date.toLocaleDateString('es-ES', { day: '2-digit', month: 'short' });
-            });
+    const ctx = newCanvas.getContext('2d');
 
-            const data = dailyStats.map(d => Math.round(d.total_seconds / 60));
+    // Verificar que tenemos datos
+    console.log('Datos para gráfico:', dailyStats);
 
-            dailyChart = new Chart(ctx, {
-                type: 'bar',
-                data: {
-                    labels: labels,
-                    datasets: [{
-                        label: 'Minutos',
-                        data: data,
-                        backgroundColor: 'rgba(102, 126, 234, 0.8)',
-                        borderColor: 'rgba(102, 126, 234, 1)',
-                        borderWidth: 1,
-                        borderRadius: 6
-                    }]
+    const labels = dailyStats.map(d => {
+        const date = new Date(d.watch_date);
+        return date.toLocaleDateString('es-ES', { day: '2-digit', month: 'short' });
+    });
+
+    const data = dailyStats.map(d => Math.round(d.total_seconds / 60));
+
+    console.log('Labels generados:', labels);
+    console.log('Datos generados:', data);
+
+    dailyChart = new Chart(ctx, {
+        type: 'bar',
+        data: {
+            labels: labels,
+            datasets: [{
+                label: 'Minutos',
+                data: data,
+                backgroundColor: 'rgba(102, 126, 234, 0.8)',
+                borderColor: 'rgba(102, 126, 234, 1)',
+                borderWidth: 1,
+                borderRadius: 6
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: {
+                    display: false
                 },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    plugins: {
-                        legend: {
-                            display: false
-                        },
-                        tooltip: {
-                            callbacks: {
-                                label: function(context) {
-                                    return context.parsed.y + ' minutos';
-                                }
-                            }
-                        }
-                    },
-                    scales: {
-                        y: {
-                            beginAtZero: true,
-                            ticks: {
-                                callback: function(value) {
-                                    return value + ' min';
-                                }
-                            }
+                tooltip: {
+                    callbacks: {
+                        label: function(context) {
+                            return context.parsed.y + ' minutos';
                         }
                     }
                 }
-            });
+            },
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    ticks: {
+                        callback: function(value) {
+                            return value + ' min';
+                        }
+                    }
+                }
+            }
         }
+    });
+}
 
         // Renderizar top videos
         function renderTopVideos(containerId, videos, type) {
