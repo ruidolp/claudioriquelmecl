@@ -6,25 +6,25 @@ export default async function handler(req, res) {
   }
 
   try {
-    // Total minutos hoy
+    // Total minutos hoy (usando fecha de Chile)
     const todayStats = await sql`
       SELECT COALESCE(SUM(seconds_watched), 0) as total_seconds
       FROM watch_sessions
-      WHERE watch_date = CURRENT_DATE
+      WHERE watch_date = (NOW() AT TIME ZONE 'America/Santiago')::date
     `;
 
     // Total minutos esta semana
     const weekStats = await sql`
       SELECT COALESCE(SUM(seconds_watched), 0) as total_seconds
       FROM watch_sessions
-      WHERE watch_date >= CURRENT_DATE - INTERVAL '7 days'
+      WHERE watch_date >= ((NOW() AT TIME ZONE 'America/Santiago')::date - INTERVAL '7 days')
     `;
 
     // Total minutos este mes
     const monthStats = await sql`
       SELECT COALESCE(SUM(seconds_watched), 0) as total_seconds
       FROM watch_sessions
-      WHERE watch_date >= CURRENT_DATE - INTERVAL '30 days'
+      WHERE watch_date >= ((NOW() AT TIME ZONE 'America/Santiago')::date - INTERVAL '30 days')
     `;
 
     // Videos más reproducidos (por cantidad)
@@ -60,7 +60,7 @@ export default async function handler(req, res) {
         SUM(seconds_watched) as total_seconds,
         COUNT(*) as sessions
       FROM watch_sessions
-      WHERE watch_date >= CURRENT_DATE - INTERVAL '30 days'
+      WHERE watch_date >= ((NOW() AT TIME ZONE 'America/Santiago')::date - INTERVAL '30 days')
       GROUP BY watch_date
       ORDER BY watch_date ASC
     `;
@@ -75,7 +75,7 @@ export default async function handler(req, res) {
         seconds_watched,
         completed
       FROM watch_sessions
-      WHERE watch_date = CURRENT_DATE
+      WHERE watch_date = (NOW() AT TIME ZONE 'America/Santiago')::date
       ORDER BY started_at DESC
     `;
 
