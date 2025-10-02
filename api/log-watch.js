@@ -9,14 +9,14 @@ export default async function handler(req, res) {
     const { action, videoId, videoName, sessionId, seconds, completed } = req.body;
 
     if (action === 'start') {
-      // Usar zona horaria de Chile para started_at y watch_date
+      // CORRECCIÓN: doble conversión de timezone
       const { rows } = await sql`
         INSERT INTO watch_sessions (video_id, video_nombre, started_at, watch_date)
         VALUES (
           ${videoId}, 
           ${videoName}, 
-          (NOW() AT TIME ZONE 'America/Santiago'),
-          (NOW() AT TIME ZONE 'America/Santiago')::date
+          (NOW() AT TIME ZONE 'UTC' AT TIME ZONE 'America/Santiago'),
+          (NOW() AT TIME ZONE 'UTC' AT TIME ZONE 'America/Santiago')::date
         )
         RETURNING id
       `;
@@ -29,7 +29,7 @@ export default async function handler(req, res) {
     } else if (action === 'end') {
       await sql`
         UPDATE watch_sessions
-        SET ended_at = (NOW() AT TIME ZONE 'America/Santiago'),
+        SET ended_at = (NOW() AT TIME ZONE 'UTC' AT TIME ZONE 'America/Santiago'),
             seconds_watched = ${seconds || 0},
             completed = ${completed || false}
         WHERE id = ${sessionId}
