@@ -1,0 +1,664 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WAPP - Sistema de Gestión Financiera</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        /* Ocultar scrollbar pero mantener funcionalidad */
+        .hide-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+        .hide-scrollbar {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+
+        /* Animaciones suaves */
+        .section-container {
+            transition: transform 0.3s ease-out;
+        }
+
+        /* Efecto de sobre */
+        .envelope-card {
+            position: relative;
+            background: linear-gradient(to bottom, 
+                var(--envelope-flap) 0%, 
+                var(--envelope-flap) 15%, 
+                var(--envelope-body) 15%, 
+                var(--envelope-body) 100%);
+        }
+
+        .envelope-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 15%;
+            background: linear-gradient(135deg, 
+                transparent 0%, 
+                transparent 49%, 
+                var(--envelope-line) 49%, 
+                var(--envelope-line) 51%, 
+                transparent 51%, 
+                transparent 100%);
+        }
+
+        /* Temas */
+        [data-theme="clasico"] {
+            --bg-primary: #ffffff;
+            --bg-secondary: #f8f9fa;
+            --text-primary: #1a1a1a;
+            --text-secondary: #6c757d;
+            --accent: #007bff;
+            --accent-hover: #0056b3;
+            --border: #dee2e6;
+            --card-bg: #ffffff;
+            --shadow: rgba(0, 0, 0, 0.1);
+            --envelope-flap: #e8eaed;
+            --envelope-body: #ffffff;
+            --envelope-line: #dee2e6;
+            --interest-bg: #fff3cd;
+        }
+
+        [data-theme="negro"] {
+            --bg-primary: #121212;
+            --bg-secondary: #1e1e1e;
+            --text-primary: #ffffff;
+            --text-secondary: #b0b0b0;
+            --accent: #bb86fc;
+            --accent-hover: #9965f4;
+            --border: #2c2c2c;
+            --card-bg: #1e1e1e;
+            --shadow: rgba(0, 0, 0, 0.5);
+            --envelope-flap: #2c2c2c;
+            --envelope-body: #1e1e1e;
+            --envelope-line: #3c3c3c;
+            --interest-bg: #3d2e00;
+        }
+
+        [data-theme="neon"] {
+            --bg-primary: #0a0a0a;
+            --bg-secondary: #1a1a2e;
+            --text-primary: #00fff9;
+            --text-secondary: #bd00ff;
+            --accent: #ff006e;
+            --accent-hover: #d6006f;
+            --border: #bd00ff;
+            --card-bg: #16213e;
+            --shadow: rgba(189, 0, 255, 0.4);
+            --envelope-flap: #1a1a2e;
+            --envelope-body: #16213e;
+            --envelope-line: #bd00ff;
+            --interest-bg: #3d0066;
+        }
+
+        [data-theme="rosado"] {
+            --bg-primary: #fff0f5;
+            --bg-secondary: #ffe4f0;
+            --text-primary: #4a1942;
+            --text-secondary: #8b5a8b;
+            --accent: #ff69b4;
+            --accent-hover: #ff1493;
+            --border: #ffc0cb;
+            --card-bg: #fff5fa;
+            --shadow: rgba(255, 105, 180, 0.2);
+            --envelope-flap: #ffe4f0;
+            --envelope-body: #fff5fa;
+            --envelope-line: #ffc0cb;
+            --interest-bg: #ffd7e8;
+        }
+
+        [data-theme="futurista"] {
+            --bg-primary: #0a192f;
+            --bg-secondary: #112240;
+            --text-primary: #ccd6f6;
+            --text-secondary: #8892b0;
+            --accent: #64ffda;
+            --accent-hover: #4dd4b8;
+            --border: #233554;
+            --card-bg: #172a45;
+            --shadow: rgba(100, 255, 218, 0.15);
+            --envelope-flap: #112240;
+            --envelope-body: #172a45;
+            --envelope-line: #233554;
+            --interest-bg: #1d3a5f;
+        }
+
+        body {
+            background-color: var(--bg-primary);
+            color: var(--text-primary);
+        }
+
+        .card-shadow {
+            box-shadow: 0 4px 6px var(--shadow), 0 2px 4px var(--shadow);
+        }
+
+        .input-depth {
+            box-shadow: inset 0 2px 4px var(--shadow);
+        }
+
+        /* Tab activo */
+        .tab-active {
+            border-bottom: 3px solid var(--accent);
+            color: var(--accent);
+        }
+
+        /* Gráfico circular simple con SVG */
+        .pie-chart {
+            transform: rotate(-90deg);
+        }
+    </style>
+</head>
+<body class="h-screen flex flex-col overflow-hidden" data-theme="clasico">
+    
+    <!-- HEADER FIJO -->
+    <header class="flex items-center justify-between px-4 py-3 border-b" style="background-color: var(--bg-secondary); border-color: var(--border);">
+        <div class="text-2xl font-bold" style="color: var(--accent);">WAPP</div>
+        
+        <div class="flex items-center gap-3">
+            <!-- Selector de temas -->
+            <select id="themeSelector" class="px-3 py-1 rounded-lg text-sm input-depth" style="background-color: var(--card-bg); color: var(--text-primary); border: 1px solid var(--border);">
+                <option value="clasico">Clásico Blanco</option>
+                <option value="negro">Negro</option>
+                <option value="neon">Neon</option>
+                <option value="rosado">Rosado</option>
+                <option value="futurista">Futurista</option>
+            </select>
+            
+            <!-- Menú desplegable -->
+            <button class="p-2 rounded-lg hover:opacity-80" style="background-color: var(--card-bg);">
+                <svg class="w-6 h-6" style="color: var(--text-primary);" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
+                </svg>
+            </button>
+        </div>
+    </header>
+
+    <!-- TABS -->
+    <nav class="flex border-b" style="background-color: var(--bg-secondary); border-color: var(--border);">
+        <button class="tab flex-1 py-3 text-sm font-medium tab-active" data-section="0" style="color: var(--text-primary);">
+            BILLETERA
+        </button>
+        <button class="tab flex-1 py-3 text-sm font-medium" data-section="1" style="color: var(--text-secondary);">
+            HOGAR
+        </button>
+        <button class="tab flex-1 py-3 text-sm font-medium" data-section="2" style="color: var(--text-secondary);">
+            PERSONAL
+        </button>
+    </nav>
+
+    <!-- CONTENEDOR DE SECCIONES (Swipe horizontal) -->
+    <main class="flex-1 overflow-hidden">
+        <div id="sectionsContainer" class="flex h-full section-container" style="width: 300%;">
+            
+            <!-- SECCIÓN 1: BILLETERA -->
+            <section class="w-screen overflow-y-auto hide-scrollbar p-4">
+                <!-- Card Cuenta Normal -->
+                <div class="mb-4 p-4 rounded-xl card-shadow" style="background-color: var(--card-bg);">
+                    <h3 class="font-semibold mb-3" style="color: var(--text-primary);">Banco Chile Débito</h3>
+                    
+                    <!-- Gráfico REAL -->
+                    <div class="mb-4">
+                        <div class="flex justify-between text-xs mb-1" style="color: var(--text-secondary);">
+                            <span>REAL</span>
+                            <span>$850.000 / $1.200.000</span>
+                        </div>
+                        <div class="relative h-2 rounded-full" style="background-color: var(--bg-secondary);">
+                            <div class="absolute h-full rounded-full" style="width: 71%; background-color: var(--accent);"></div>
+                        </div>
+                    </div>
+                    
+                    <!-- Gráfico PROYECTADO -->
+                    <div>
+                        <div class="flex justify-between text-xs mb-1" style="color: var(--text-secondary);">
+                            <span>PROYECTADO</span>
+                            <span>$650.000 / $1.200.000</span>
+                        </div>
+                        <div class="relative h-2 rounded-full" style="background-color: var(--bg-secondary);">
+                            <div class="absolute h-full rounded-full opacity-60" style="width: 54%; background-color: var(--accent); border: 2px dashed var(--text-secondary);"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Card Cuenta Normal 2 -->
+                <div class="mb-4 p-4 rounded-xl card-shadow" style="background-color: var(--card-bg);">
+                    <h3 class="font-semibold mb-3" style="color: var(--text-primary);">Banco Estado Débito</h3>
+                    
+                    <div class="mb-4">
+                        <div class="flex justify-between text-xs mb-1" style="color: var(--text-secondary);">
+                            <span>REAL</span>
+                            <span>$320.000 / $500.000</span>
+                        </div>
+                        <div class="relative h-2 rounded-full" style="background-color: var(--bg-secondary);">
+                            <div class="absolute h-full rounded-full" style="width: 64%; background-color: var(--accent);"></div>
+                        </div>
+                    </div>
+                    
+                    <div>
+                        <div class="flex justify-between text-xs mb-1" style="color: var(--text-secondary);">
+                            <span>PROYECTADO</span>
+                            <span>$420.000 / $500.000</span>
+                        </div>
+                        <div class="relative h-2 rounded-full" style="background-color: var(--bg-secondary);">
+                            <div class="absolute h-full rounded-full opacity-60" style="width: 84%; background-color: var(--accent); border: 2px dashed var(--text-secondary);"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Card Efectivo -->
+                <div class="mb-4 p-4 rounded-xl card-shadow" style="background-color: var(--card-bg);">
+                    <h3 class="font-semibold mb-3" style="color: var(--text-primary);">Efectivo</h3>
+                    
+                    <div class="mb-4">
+                        <div class="flex justify-between text-xs mb-1" style="color: var(--text-secondary);">
+                            <span>REAL</span>
+                            <span>$45.000 / $100.000</span>
+                        </div>
+                        <div class="relative h-2 rounded-full" style="background-color: var(--bg-secondary);">
+                            <div class="absolute h-full rounded-full" style="width: 45%; background-color: var(--accent);"></div>
+                        </div>
+                    </div>
+                    
+                    <div>
+                        <div class="flex justify-between text-xs mb-1" style="color: var(--text-secondary);">
+                            <span>PROYECTADO</span>
+                            <span>$30.000 / $100.000</span>
+                        </div>
+                        <div class="relative h-2 rounded-full" style="background-color: var(--bg-secondary);">
+                            <div class="absolute h-full rounded-full opacity-60" style="width: 30%; background-color: var(--accent); border: 2px dashed var(--text-secondary);"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Card CON INTERÉS (Sobregiro) -->
+                <div class="mb-4 p-4 rounded-xl card-shadow" style="background-color: var(--interest-bg);">
+                    <div class="flex items-center gap-2 mb-3">
+                        <svg class="w-5 h-5" style="color: var(--accent);" fill="currentColor" viewBox="0 0 20 20">
+                            <path fill-rule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clip-rule="evenodd"></path>
+                        </svg>
+                        <h3 class="font-semibold" style="color: var(--text-primary);">Línea Sobregiro BCI</h3>
+                    </div>
+                    
+                    <div class="mb-4">
+                        <div class="flex justify-between text-xs mb-1" style="color: var(--text-secondary);">
+                            <span>REAL</span>
+                            <span>$180.000 / $300.000</span>
+                        </div>
+                        <div class="relative h-2 rounded-full" style="background-color: var(--bg-secondary);">
+                            <div class="absolute h-full rounded-full" style="width: 60%; background: linear-gradient(to right, #ff6b6b, #ee5a6f);"></div>
+                        </div>
+                    </div>
+                    
+                    <div>
+                        <div class="flex justify-between text-xs mb-1" style="color: var(--text-secondary);">
+                            <span>PROYECTADO</span>
+                            <span>$240.000 / $300.000</span>
+                        </div>
+                        <div class="relative h-2 rounded-full" style="background-color: var(--bg-secondary);">
+                            <div class="absolute h-full rounded-full opacity-60" style="width: 80%; background: linear-gradient(to right, #ff6b6b, #ee5a6f); border: 2px dashed var(--text-secondary);"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Card CON INTERÉS (Tarjeta) -->
+                <div class="mb-4 p-4 rounded-xl card-shadow" style="background-color: var(--interest-bg);">
+                    <div class="flex items-center gap-2 mb-3">
+                        <svg class="w-5 h-5" style="color: var(--accent);" fill="currentColor" viewBox="0 0 20 20">
+                            <path fill-rule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clip-rule="evenodd"></path>
+                        </svg>
+                        <h3 class="font-semibold" style="color: var(--text-primary);">Visa Mach</h3>
+                    </div>
+                    
+                    <div class="mb-4">
+                        <div class="flex justify-between text-xs mb-1" style="color: var(--text-secondary);">
+                            <span>REAL</span>
+                            <span>$95.000 / $200.000</span>
+                        </div>
+                        <div class="relative h-2 rounded-full" style="background-color: var(--bg-secondary);">
+                            <div class="absolute h-full rounded-full" style="width: 47.5%; background: linear-gradient(to right, #ff6b6b, #ee5a6f);"></div>
+                        </div>
+                    </div>
+                    
+                    <div>
+                        <div class="flex justify-between text-xs mb-1" style="color: var(--text-secondary);">
+                            <span>PROYECTADO</span>
+                            <span>$150.000 / $200.000</span>
+                        </div>
+                        <div class="relative h-2 rounded-full" style="background-color: var(--bg-secondary);">
+                            <div class="absolute h-full rounded-full opacity-60" style="width: 75%; background: linear-gradient(to right, #ff6b6b, #ee5a6f); border: 2px dashed var(--text-secondary);"></div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- SECCIÓN 2: HOGAR -->
+            <section class="w-screen overflow-y-auto hide-scrollbar p-4">
+                <!-- Sobre 1: Supermercado -->
+                <div class="mb-6 p-6 rounded-xl card-shadow envelope-card">
+                    <h3 class="font-semibold text-lg mb-4 text-center" style="color: var(--text-primary);">Supermercado</h3>
+                    
+                    <div class="text-center mb-4">
+                        <div class="text-2xl font-bold" style="color: var(--accent);">$285.000</div>
+                        <div class="text-sm" style="color: var(--text-secondary);">de $400.000</div>
+                    </div>
+                    
+                    <!-- Gráfico circular -->
+                    <div class="flex justify-center mb-4">
+                        <div class="relative w-32 h-32">
+                            <svg class="w-full h-full pie-chart" viewBox="0 0 100 100">
+                                <!-- Fondo del círculo -->
+                                <circle cx="50" cy="50" r="40" fill="none" stroke="var(--bg-secondary)" stroke-width="12"></circle>
+                                <!-- Progreso -->
+                                <circle cx="50" cy="50" r="40" fill="none" stroke="var(--accent)" stroke-width="12"
+                                    stroke-dasharray="179.07 251.2" stroke-linecap="round"></circle>
+                            </svg>
+                            <div class="absolute inset-0 flex items-center justify-center">
+                                <span class="text-2xl font-bold" style="color: var(--text-primary);">71%</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Categorías clickeables -->
+                    <div class="flex flex-wrap gap-2 justify-center">
+                        <button class="px-3 py-1 rounded-full text-xs card-shadow" style="background-color: var(--bg-secondary); color: var(--text-primary);">
+                            Verduras
+                        </button>
+                        <button class="px-3 py-1 rounded-full text-xs card-shadow" style="background-color: var(--bg-secondary); color: var(--text-primary);">
+                            Carnes
+                        </button>
+                        <button class="px-3 py-1 rounded-full text-xs card-shadow" style="background-color: var(--bg-secondary); color: var(--text-primary);">
+                            Lácteos
+                        </button>
+                        <button class="px-3 py-1 rounded-full text-xs card-shadow" style="background-color: var(--bg-secondary); color: var(--text-primary);">
+                            Limpieza
+                        </button>
+                        <button class="px-3 py-1 rounded-full text-xs card-shadow" style="background-color: var(--bg-secondary); color: var(--text-primary);">
+                            Otros
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Sobre 2: Restaurantes -->
+                <div class="mb-6 p-6 rounded-xl card-shadow envelope-card">
+                    <h3 class="font-semibold text-lg mb-4 text-center" style="color: var(--text-primary);">Restaurantes</h3>
+                    
+                    <div class="text-center mb-4">
+                        <div class="text-2xl font-bold" style="color: var(--accent);">$125.000</div>
+                        <div class="text-sm" style="color: var(--text-secondary);">de $150.000</div>
+                    </div>
+                    
+                    <div class="flex justify-center mb-4">
+                        <div class="relative w-32 h-32">
+                            <svg class="w-full h-full pie-chart" viewBox="0 0 100 100">
+                                <circle cx="50" cy="50" r="40" fill="none" stroke="var(--bg-secondary)" stroke-width="12"></circle>
+                                <circle cx="50" cy="50" r="40" fill="none" stroke="var(--accent)" stroke-width="12"
+                                    stroke-dasharray="209.44 251.2" stroke-linecap="round"></circle>
+                            </svg>
+                            <div class="absolute inset-0 flex items-center justify-center">
+                                <span class="text-2xl font-bold" style="color: var(--text-primary);">83%</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="flex flex-wrap gap-2 justify-center">
+                        <button class="px-3 py-1 rounded-full text-xs card-shadow" style="background-color: var(--bg-secondary); color: var(--text-primary);">
+                            Almuerzos
+                        </button>
+                        <button class="px-3 py-1 rounded-full text-xs card-shadow" style="background-color: var(--bg-secondary); color: var(--text-primary);">
+                            Cenas
+                        </button>
+                        <button class="px-3 py-1 rounded-full text-xs card-shadow" style="background-color: var(--bg-secondary); color: var(--text-primary);">
+                            Café
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Sobre 3: Delivery -->
+                <div class="mb-6 p-6 rounded-xl card-shadow envelope-card">
+                    <h3 class="font-semibold text-lg mb-4 text-center" style="color: var(--text-primary);">Delivery</h3>
+                    
+                    <div class="text-center mb-4">
+                        <div class="text-2xl font-bold" style="color: var(--accent);">$48.000</div>
+                        <div class="text-sm" style="color: var(--text-secondary);">de $80.000</div>
+                    </div>
+                    
+                    <div class="flex justify-center mb-4">
+                        <div class="relative w-32 h-32">
+                            <svg class="w-full h-full pie-chart" viewBox="0 0 100 100">
+                                <circle cx="50" cy="50" r="40" fill="none" stroke="var(--bg-secondary)" stroke-width="12"></circle>
+                                <circle cx="50" cy="50" r="40" fill="none" stroke="var(--accent)" stroke-width="12"
+                                    stroke-dasharray="150.72 251.2" stroke-linecap="round"></circle>
+                            </svg>
+                            <div class="absolute inset-0 flex items-center justify-center">
+                                <span class="text-2xl font-bold" style="color: var(--text-primary);">60%</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="flex flex-wrap gap-2 justify-center">
+                        <button class="px-3 py-1 rounded-full text-xs card-shadow" style="background-color: var(--bg-secondary); color: var(--text-primary);">
+                            PedidosYa
+                        </button>
+                        <button class="px-3 py-1 rounded-full text-xs card-shadow" style="background-color: var(--bg-secondary); color: var(--text-primary);">
+                            Uber Eats
+                        </button>
+                        <button class="px-3 py-1 rounded-full text-xs card-shadow" style="background-color: var(--bg-secondary); color: var(--text-primary);">
+                            Rappi
+                        </button>
+                    </div>
+                </div>
+            </section>
+
+            <!-- SECCIÓN 3: PERSONAL -->
+            <section class="w-screen overflow-y-auto hide-scrollbar p-4">
+                <!-- Sobre 1: Combustible -->
+                <div class="mb-6 p-6 rounded-xl card-shadow envelope-card">
+                    <h3 class="font-semibold text-lg mb-4 text-center" style="color: var(--text-primary);">Combustible</h3>
+                    
+                    <div class="text-center mb-4">
+                        <div class="text-2xl font-bold" style="color: var(--accent);">$68.000</div>
+                        <div class="text-sm" style="color: var(--text-secondary);">de $100.000</div>
+                    </div>
+                    
+                    <div class="flex justify-center mb-4">
+                        <div class="relative w-32 h-32">
+                            <svg class="w-full h-full pie-chart" viewBox="0 0 100 100">
+                                <circle cx="50" cy="50" r="40" fill="none" stroke="var(--bg-secondary)" stroke-width="12"></circle>
+                                <circle cx="50" cy="50" r="40" fill="none" stroke="var(--accent)" stroke-width="12"
+                                    stroke-dasharray="170.816 251.2" stroke-linecap="round"></circle>
+                            </svg>
+                            <div class="absolute inset-0 flex items-center justify-center">
+                                <span class="text-2xl font-bold" style="color: var(--text-primary);">68%</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="flex flex-wrap gap-2 justify-center">
+                        <button class="px-3 py-1 rounded-full text-xs card-shadow" style="background-color: var(--bg-secondary); color: var(--text-primary);">
+                            Copec
+                        </button>
+                        <button class="px-3 py-1 rounded-full text-xs card-shadow" style="background-color: var(--bg-secondary); color: var(--text-primary);">
+                            Shell
+                        </button>
+                        <button class="px-3 py-1 rounded-full text-xs card-shadow" style="background-color: var(--bg-secondary); color: var(--text-primary);">
+                            Petrobras
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Sobre 2: Entretenimiento -->
+                <div class="mb-6 p-6 rounded-xl card-shadow envelope-card">
+                    <h3 class="font-semibold text-lg mb-4 text-center" style="color: var(--text-primary);">Entretenimiento</h3>
+                    
+                    <div class="text-center mb-4">
+                        <div class="text-2xl font-bold" style="color: var(--accent);">$35.000</div>
+                        <div class="text-sm" style="color: var(--text-secondary);">de $120.000</div>
+                    </div>
+                    
+                    <div class="flex justify-center mb-4">
+                        <div class="relative w-32 h-32">
+                            <svg class="w-full h-full pie-chart" viewBox="0 0 100 100">
+                                <circle cx="50" cy="50" r="40" fill="none" stroke="var(--bg-secondary)" stroke-width="12"></circle>
+                                <circle cx="50" cy="50" r="40" fill="none" stroke="var(--accent)" stroke-width="12"
+                                    stroke-dasharray="73.28 251.2" stroke-linecap="round"></circle>
+                            </svg>
+                            <div class="absolute inset-0 flex items-center justify-center">
+                                <span class="text-2xl font-bold" style="color: var(--text-primary);">29%</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="flex flex-wrap gap-2 justify-center">
+                        <button class="px-3 py-1 rounded-full text-xs card-shadow" style="background-color: var(--bg-secondary); color: var(--text-primary);">
+                            Cine
+                        </button>
+                        <button class="px-3 py-1 rounded-full text-xs card-shadow" style="background-color: var(--bg-secondary); color: var(--text-primary);">
+                            Streaming
+                        </button>
+                        <button class="px-3 py-1 rounded-full text-xs card-shadow" style="background-color: var(--bg-secondary); color: var(--text-primary);">
+                            Gaming
+                        </button>
+                        <button class="px-3 py-1 rounded-full text-xs card-shadow" style="background-color: var(--bg-secondary); color: var(--text-primary);">
+                            Eventos
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Sobre 3: Ropa -->
+                <div class="mb-6 p-6 rounded-xl card-shadow envelope-card">
+                    <h3 class="font-semibold text-lg mb-4 text-center" style="color: var(--text-primary);">Ropa & Accesorios</h3>
+                    
+                    <div class="text-center mb-4">
+                        <div class="text-2xl font-bold" style="color: var(--accent);">$92.000</div>
+                        <div class="text-sm" style="color: var(--text-secondary);">de $150.000</div>
+                    </div>
+                    
+                    <div class="flex justify-center mb-4">
+                        <div class="relative w-32 h-32">
+                            <svg class="w-full h-full pie-chart" viewBox="0 0 100 100">
+                                <circle cx="50" cy="50" r="40" fill="none" stroke="var(--bg-secondary)" stroke-width="12"></circle>
+                                <circle cx="50" cy="50" r="40" fill="none" stroke="var(--accent)" stroke-width="12"
+                                    stroke-dasharray="154.24 251.2" stroke-linecap="round"></circle>
+                            </svg>
+                            <div class="absolute inset-0 flex items-center justify-center">
+                                <span class="text-2xl font-bold" style="color: var(--text-primary);">61%</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="flex flex-wrap gap-2 justify-center">
+                        <button class="px-3 py-1 rounded-full text-xs card-shadow" style="background-color: var(--bg-secondary); color: var(--text-primary);">
+                            Zapatillas
+                        </button>
+                        <button class="px-3 py-1 rounded-full text-xs card-shadow" style="background-color: var(--bg-secondary); color: var(--text-primary);">
+                            Camisetas
+                        </button>
+                        <button class="px-3 py-1 rounded-full text-xs card-shadow" style="background-color: var(--bg-secondary); color: var(--text-primary);">
+                            Accesorios
+                        </button>
+                    </div>
+                </div>
+            </section>
+
+        </div>
+    </main>
+
+    <!-- FOOTER FIJO CONTEXTUAL -->
+    <footer id="footerButtons" class="border-t p-4" style="background-color: var(--bg-secondary); border-color: var(--border);">
+        <!-- Footer para Billetera -->
+        <div id="footerBilletera" class="flex gap-3">
+            <button class="flex-1 py-3 rounded-lg font-medium card-shadow" style="background-color: var(--accent); color: white;">
+                + Abono
+            </button>
+            <button class="flex-1 py-3 rounded-lg font-medium card-shadow" style="background-color: var(--accent); color: white;">
+                + Cuenta
+            </button>
+        </div>
+        
+        <!-- Footer para Hogar/Personal -->
+        <div id="footerSobres" class="hidden">
+            <button class="w-full py-3 rounded-lg font-medium card-shadow" style="background-color: var(--accent); color: white;">
+                + Gasto
+            </button>
+        </div>
+    </footer>
+
+    <script>
+        let currentSection = 0;
+        const container = document.getElementById('sectionsContainer');
+        const tabs = document.querySelectorAll('.tab');
+        const footerBilletera = document.getElementById('footerBilletera');
+        const footerSobres = document.getElementById('footerSobres');
+        const themeSelector = document.getElementById('themeSelector');
+
+        // Función para cambiar de sección
+        function goToSection(index) {
+            currentSection = index;
+            container.style.transform = `translateX(-${index * 100 / 3}%)`;
+            
+            // Actualizar tabs
+            tabs.forEach((tab, i) => {
+                if (i === index) {
+                    tab.classList.add('tab-active');
+                    tab.style.color = 'var(--accent)';
+                } else {
+                    tab.classList.remove('tab-active');
+                    tab.style.color = 'var(--text-secondary)';
+                }
+            });
+            
+            // Actualizar footer
+            if (index === 0) {
+                footerBilletera.classList.remove('hidden');
+                footerSobres.classList.add('hidden');
+            } else {
+                footerBilletera.classList.add('hidden');
+                footerSobres.classList.remove('hidden');
+            }
+        }
+
+        // Eventos de tabs
+        tabs.forEach(tab => {
+            tab.addEventListener('click', () => {
+                const section = parseInt(tab.dataset.section);
+                goToSection(section);
+            });
+        });
+
+        // Swipe horizontal
+        let touchStartX = 0;
+        let touchEndX = 0;
+
+        container.addEventListener('touchstart', (e) => {
+            touchStartX = e.changedTouches[0].screenX;
+        });
+
+        container.addEventListener('touchend', (e) => {
+            touchEndX = e.changedTouches[0].screenX;
+            handleSwipe();
+        });
+
+        function handleSwipe() {
+            if (touchEndX < touchStartX - 50 && currentSection < 2) {
+                // Swipe izquierda
+                goToSection(currentSection + 1);
+            }
+            if (touchEndX > touchStartX + 50 && currentSection > 0) {
+                // Swipe derecha
+                goToSection(currentSection - 1);
+            }
+        }
+
+        // Cambio de tema
+        themeSelector.addEventListener('change', (e) => {
+            document.body.dataset.theme = e.target.value;
+        });
+
+        // Inicializar
+        goToSection(0);
+    </script>
+</body>
+</html>
