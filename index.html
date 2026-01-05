@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SQL Playground - Claudio Riquelme DBA Senior</title>
+    <title>Emulador SQL</title>
 
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
@@ -17,11 +17,8 @@
 </head>
 <body class="min-h-screen bg-gray-50">
 
-    <!-- Header (cargado dinámicamente) -->
-    <div id="header"></div>
-
     <!-- Contenido principal -->
-    <main class="pt-16">
+    <main>
 
         <!-- SQL Playground Section -->
         <section class="py-12 px-4 sm:px-6 lg:px-8">
@@ -30,10 +27,10 @@
                 <!-- Hero -->
                 <div class="text-center mb-12">
                     <h1 class="text-4xl font-bold text-gray-900 mb-4 sm:text-5xl">
-                        🗄️ SQL Playground Interactivo
+                        🗄️ Emulador SQL
                     </h1>
                     <p class="text-xl text-gray-700 max-w-3xl mx-auto mb-4">
-                        Ejecuta queries SQL reales en tu navegador. Base de datos PostgreSQL-compatible en memoria.
+                        Ejecuta queries SQL reales en tu navegador.
                     </p>
                     <div class="w-20 h-1 bg-gradient-to-r from-cyan-400 to-emerald-500 mx-auto mb-4"></div>
                     <div class="flex justify-center gap-4 text-sm text-gray-600">
@@ -232,11 +229,6 @@
                             <p class="text-sm text-gray-500">
                                 Los cambios (INSERT/UPDATE/DELETE) se mantienen durante la sesión, pero se resetean al recargar la página.
                             </p>
-                            <div class="mt-4">
-                                <a href="simulator.html" class="inline-block px-4 py-2 bg-gradient-to-r from-cyan-500 to-emerald-500 hover:from-cyan-600 hover:to-emerald-600 text-white font-bold rounded transition-all">
-                                    Ver Simulador de Fallas DB →
-                                </a>
-                            </div>
                         </div>
                     </div>
 
@@ -247,11 +239,7 @@
 
     </main>
 
-    <!-- Footer (cargado dinámicamente) -->
-    <div id="footer"></div>
-
     <!-- JavaScript -->
-    <script src="js/main.js"></script>
     <script src="js/sql-playground.js"></script>
 
 </body>
